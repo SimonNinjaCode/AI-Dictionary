@@ -4,16 +4,6 @@
   Regenerate: npm run generate
 -->
 
-<p>
-  <a href="https://aicodingdictionary.com">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://res.cloudinary.com/total-typescript/image/upload/v1782821584/dictionary-dark.png">
-      <source media="(prefers-color-scheme: light)" srcset="https://res.cloudinary.com/total-typescript/image/upload/v1782821584/dictionary-light.png">
-      <img alt="AI Dictionary" src="https://res.cloudinary.com/total-typescript/image/upload/v1782821584/dictionary-light.png" width="369">
-    </picture>
-  </a>
-</p>
-
 # AI Dictionary
 
 **AI coding can feel like it's just for experts**. Unexplained jargon. Mysterious failures. Bills that don't seem to match the work.
@@ -27,8 +17,6 @@ Why does context degrade? Why is the bill so high? Why does the same prompt beha
 Each has a clean answer, once someone tells you the words to use.
 
 That's what this dictionary is for. **The vocabulary of AI coding and agent systems, translated into plain English**.
-
-**Want more than the vocabulary?** Join 62,000+ developers at **[aihero.dev/newsletter](https://www.aihero.dev/s/dictionary-newsletter)** for my latest skills, thinking on AI engineering, and the resources that'll keep you ahead of the curve.
 
 ---
 
