@@ -1,5 +1,11 @@
 ---
 description: Running a trained model to generate output — what happens on every model provider request. Parameters stay fixed.
+category: models-and-inference
+tracks:
+  - coding
+  - agent-systems
+term_status: established
+level: foundational
 ---
 
 Running a trained [model](./Model.md) to generate output — what happens on every [model provider request](./Model%20provider%20request.md). [Parameters](./Parameters.md) stay fixed; the model just does [next-token prediction](./Next-token%20prediction.md) over the [context](./Context.md) it's given. Cheap relative to [training](./Training.md), but billed per [token](./Token.md) and the dominant cost of using a model.

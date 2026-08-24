@@ -1,5 +1,11 @@
 ---
 description: Compaction triggered automatically by the harness when the context window approaches full.
+category: context-retrieval-and-memory
+tracks:
+  - coding
+  - agent-systems
+term_status: established
+level: intermediate
 ---
 
 [Compaction](./Compaction.md) triggered automatically by the [harness](./Harness.md) when the [context window](./Context%20window.md) approaches full.

@@ -1,5 +1,11 @@
 ---
 description: Whatever serves a model for inference. Usually remote (Anthropic, OpenAI, Google), but can also be local (Ollama, llama.cpp).
+category: models-and-inference
+tracks:
+  - coding
+  - agent-systems
+term_status: established
+level: foundational
 ---
 
 Whatever serves a [model](./Model.md) for [inference](./Inference.md). Usually a remote service (Anthropic, OpenAI, Google), but can also be local — Ollama, LM Studio, llama.cpp running on your own machine. The [harness](./Harness.md) doesn't run the model itself; it asks a provider to.

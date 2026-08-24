@@ -1,5 +1,10 @@
 ---
 description: Having the agent build a quick, rough version when conversation is too low-fidelity and you need a real artifact to talk about.
+category: coding-practice
+tracks:
+  - coding
+term_status: established
+level: foundational
 ---
 
 Having the [agent](./Agent.md) build a quick, rough version of something, for when conversation is too low-fidelity and you need a real artifact to talk about.

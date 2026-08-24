@@ -3,6 +3,11 @@ description: "Early in a session the agent is sharp and focused. As the session 
 aliases:
   - Dumb zone
   - Smart zone / Dumb zone
+category: context-retrieval-and-memory
+tracks:
+  - coding
+term_status: heuristic
+level: foundational
 ---
 
 Early in a [session](./Session.md) the [agent](./Agent.md) is in a "smart zone" — sharp, focused, recall is good. As the session grows it drifts into a "dumb zone": sloppier, forgetful, more mistakes — and more faithfulness [hallucinations](./Hallucination.md). Same [model](./Model.md), same [harness](./Harness.md) — just more [context](./Context.md). The felt effect of [attention degradation](./Attention%20degradation.md). On frontier models, the dumb zone commonly begins around 125K-150K [tokens](./Token.md) — though this is debated. [Clear](./Clearing.md) or [compact](./Compaction.md) when the session bloats; don't push through.

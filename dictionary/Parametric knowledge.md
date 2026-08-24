@@ -1,5 +1,11 @@
 ---
 description: What the model knows from training, stored in its parameters. Frozen at training time. Counterpart to contextual knowledge.
+category: context-retrieval-and-memory
+tracks:
+  - coding
+  - agent-systems
+term_status: established
+level: intermediate
 ---
 
 What the [model](./Model.md) "knows" from [training](./Training.md), stored in its [parameters](./Parameters.md). Frozen at training time — the model can't see its own parameters or update them. Detail is lost in the squeeze: billions of facts cram into a fixed number of parameters, and the rare ones blur. Source of fluency on common topics, and of fabrication on uncommon ones. Counterpart to [contextual knowledge](./Contextual%20knowledge.md).

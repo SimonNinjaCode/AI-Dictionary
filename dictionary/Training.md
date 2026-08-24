@@ -1,5 +1,11 @@
 ---
 description: The process that sets a model's parameters by exposing it to vast amounts of text and adjusting to improve next-token prediction.
+category: models-and-inference
+tracks:
+  - coding
+  - agent-systems
+term_status: established
+level: intermediate
 ---
 
 The process that sets a [model](./Model.md)'s [parameters](./Parameters.md), by exposing it to vast amounts of text and adjusting parameters to improve [next-token prediction](./Next-token%20prediction.md). A one-time, expensive process done by the [model provider](./Model%20provider.md). Encompasses both pre-training (the bulk run) and post-training (later refinements like instruction-following and safety); the distinction doesn't matter at this glossary's level.

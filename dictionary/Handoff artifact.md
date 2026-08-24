@@ -1,5 +1,10 @@
 ---
 description: A document used as the carry mechanism for a handoff — written by one session to be read by another.
+category: coding-practice
+tracks:
+  - coding
+term_status: established
+level: intermediate
 ---
 
 A document used as the carry mechanism for a [handoff](./Handoff.md) — written to the [environment](./Environment.md) by one [session](./Session.md) to be read by another. [Specs](./Spec.md), [tickets](./Ticket.md), and plan docs are all handoff artifacts.

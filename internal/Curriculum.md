@@ -1,4 +1,4 @@
-## Section 1 — The Model
+## Models & inference
 
 - AI
 - Model
@@ -9,81 +9,104 @@
 - Token
 - Next-token prediction
 - Non-determinism
+- Structured output
 - Model provider
-- Harness
 - Model provider request
 - Input tokens
 - Output tokens
 - Prefix cache
 - Cache tokens
 
-## Section 2 — Sessions, Context Windows & Turns
+## Context, retrieval & memory
 
 - Stateless
 - Context
 - Context window
+- Context engineering
 - Stateful
-- Agent
-- System prompt
 - Session
+- Parametric knowledge
+- Knowledge cutoff
+- Contextual knowledge
+- RAG
+- Embedding
+- Vector store
+- Attention relationship
+- Attention budget
+- Attention degradation
+- Smart zone
+- Clearing
+- Compaction
+- Autocompact
+- Memory system
+- Progressive disclosure
+- Context pointer
+
+## Agents & tools
+
+- Agent
+- Agentic AI
+- Autonomy
+- Harness
+- Agent loop
+- System prompt
 - Turn
-
-## Section 3 — Tools & Environment
-
 - Environment
 - Filesystem
 - Tool
 - Tool call
 - Tool result
+- Computer use
 - MCP
-- Permission request
-- Permission mode
-- Agent mode
-- Sandbox
+- Agent framework
+- Agent SDK
+- Skill
+- Subagent
 
-## Section 4 — Failure Modes
+## Reasoning & orchestration
 
-- Sycophancy
-- Hallucination
-- Parametric knowledge
-- Knowledge cutoff
-- Contextual knowledge
-- Attention relationship
-- Attention budget
-- Attention degradation
-- Smart zone
+- Workflow
+- Multi-agent system
+- Orchestration layer
+- State graph
 
-## Section 5 — Handoffs
+## Coding practice
 
-- Clearing
 - Handoff
 - Primary source
 - Secondary source
 - Handoff artifact
 - Spec
 - Ticket
-- Compaction
-- Autocompact
-
-## Section 6 — Memory and Steering
-
-- Memory system
 - AGENTS.md
-- Progressive disclosure
-- Context pointer
-- Skill
-- Subagent
-
-## Section 7 — Patterns of Work
-
-- Human-in-the-loop
 - AFK
-- Automated check
-- Automated review
-- Human review
 - Vibe coding
 - Design concept
 - Grilling
 - Prototyping
 - DX
 - AX
+
+## Evaluation & observability
+
+- Automated check
+- Automated review
+- Human review
+- Eval
+- Observability
+
+## Safety, permissions & identity
+
+- Sycophancy
+- Hallucination
+- Prompt injection
+- Guardrails
+- Permission request
+- Permission mode
+- Agent mode
+- Sandbox
+- Human-in-the-loop
+
+## Runtime & protocols
+
+- Durable execution

@@ -2,6 +2,11 @@
 description: "Agent experience: how well the environment is set up for an agent to do good work — checks, architecture, and free context."
 aliases:
   - Agent experience
+category: coding-practice
+tracks:
+  - coding
+term_status: emerging
+level: intermediate
 ---
 
 Agent experience — how well the [environment](./Environment.md) is set up for an [agent](./Agent.md) to do good work in a codebase. The agent-facing counterpart to [DX](./DX.md). When the same agent performs well in one repo and badly in another — same [model](./Model.md), same [harness](./Harness.md) — the difference is usually AX. The instinct is to blame the model or rewrite the prompt; the fix is more often in the repo.

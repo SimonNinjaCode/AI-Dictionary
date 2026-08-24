@@ -1,5 +1,14 @@
 ---
 description: The parameters. Stateless — does next-token prediction and nothing else. Cannot do anything agentic on its own.
+aliases:
+  - LLM
+  - Large language model
+category: models-and-inference
+tracks:
+  - coding
+  - agent-systems
+term_status: established
+level: foundational
 ---
 
 The [parameters](./Parameters.md). [Stateless](./Stateless.md) — does [next-token prediction](./Next-token%20prediction.md) and nothing else. "Claude Opus 4.x" and "GPT-5.x" are models. On its own a model can't do anything agentic; it has to be [harnessed](./Harness.md).

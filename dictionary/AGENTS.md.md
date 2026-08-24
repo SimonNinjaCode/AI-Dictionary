@@ -1,5 +1,10 @@
 ---
 description: A file in the environment that the harness loads into the context window at session start — the project's standing brief to the agent.
+category: coding-practice
+tracks:
+  - coding
+term_status: established
+level: intermediate
 ---
 
 A file in the [environment](./Environment.md) that the [harness](./Harness.md) loads into the [context window](./Context%20window.md) at [session](./Session.md) start — the project's standing brief to the [agent](./Agent.md). Cross-harness convention; some harnesses also have their own variant (Claude Code's is CLAUDE.md).

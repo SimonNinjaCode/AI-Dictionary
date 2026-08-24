@@ -1,5 +1,10 @@
 ---
 description: An account of a primary source, one step removed — summaries, docs, compaction summaries. Cheap to load, lossy by construction.
+category: coding-practice
+tracks:
+  - coding
+term_status: established
+level: foundational
 ---
 
 An account of a [primary source](./Primary%20source.md), one step removed — documentation describing code, a summary describing a transcript, a report describing search results. Cheaper to load into the [context window](./Context%20window.md) than the source it describes, and lossy by construction: whoever wrote it decided what mattered, and whatever they dropped is invisible to a reader who only has the summary.

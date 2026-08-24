@@ -1,5 +1,11 @@
 ---
 description: A moving label, not a technology. Points at whatever computers can newly, impressively do — right now, large language models.
+category: models-and-inference
+tracks:
+  - coding
+  - agent-systems
+term_status: established
+level: foundational
 ---
 
 A moving label, not a technology. "AI" doesn't name a fixed thing the way [model](./Model.md) or [token](./Token.md) does — it points at whatever computers can newly, impressively do. Right now it points at large language models. It has pointed at very different things before:

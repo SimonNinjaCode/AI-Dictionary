@@ -1,5 +1,13 @@
 ---
 description: The provider-side store that lets consecutive requests skip re-processing a shared prefix, billing those tokens at a lower rate.
+aliases:
+  - Prompt caching
+category: models-and-inference
+tracks:
+  - coding
+  - agent-systems
+term_status: established
+level: intermediate
 ---
 
 The [provider](./Model%20provider.md)-side store that lets consecutive [model provider requests](./Model%20provider%20request.md) skip re-processing a shared prefix. When the start of a request matches the start of a recent one — same [system prompt](./System%20prompt.md), same history up to some point — the provider reuses its prior work and bills those [tokens](./Token.md) as [cache tokens](./Cache%20tokens.md) at a much lower rate.

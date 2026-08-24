@@ -3,7 +3,16 @@
 
 import { readFileSync, writeFileSync, readdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { dirname, join } from "node:path";
+import { dirname, join, resolve } from "node:path";
+
+import {
+  CATEGORY_BY_HEADING,
+  parseTermMetadata,
+  TRACK_LABELS,
+  type Category,
+  type TermMetadata,
+  type Track,
+} from "./term-metadata.js";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = dirname(HERE);
@@ -13,12 +22,12 @@ const DICT_DIR = join(ROOT, "dictionary");
 const OUTPUT = join(ROOT, "README.md");
 const MARKER = "<!-- CURRICULUM -->";
 const TOC_MARKER = "<!-- TOC -->";
+const TRACKS_MARKER = "<!-- TRACKS -->";
 
-const SECTION_RE = /^## Section \d+ — .+$/;
 const BULLET_RE = /^- (.+)$/;
 const LINK_RE = /\[([^\]]+)\]\(\.\/([^)]+)\.md\)/g;
 
-type Section = { heading: string; terms: string[] };
+type Section = { heading: string; category: Category; terms: string[] };
 
 function fail(msg: string): never {
   console.error(msg);
@@ -27,14 +36,14 @@ function fail(msg: string): never {
 
 // Mirrors GitHub's heading slugger: lowercase, strip punctuation (keeping hyphens),
 // then replace spaces with hyphens. "Section 1 — Foundations" → "section-1--foundations".
-function headingSlug(heading: string): string {
+export function headingSlug(heading: string): string {
   return heading
     .toLowerCase()
     .replace(/[^\p{L}\p{N} -]/gu, "")
     .replace(/ /g, "-");
 }
 
-function parseCurriculum(text: string): Section[] {
+export function parseCurriculum(text: string): Section[] {
   const sections: Section[] = [];
   let current: Section | null = null;
 
@@ -44,12 +53,13 @@ function parseCurriculum(text: string): Section[] {
     if (line === "") return;
 
     if (line.startsWith("## ")) {
-      if (!SECTION_RE.test(line)) {
-        fail(
-          `Curriculum.md:${lineNo}: section heading must match "## Section N — Title" (em-dash required): ${line}`
-        );
+      const heading = line.slice(3);
+      const category =
+        CATEGORY_BY_HEADING[heading as keyof typeof CATEGORY_BY_HEADING];
+      if (!category) {
+        fail(`Curriculum.md:${lineNo}: unknown category heading: ${heading}`);
       }
-      current = { heading: line.slice(3), terms: [] };
+      current = { heading, category, terms: [] };
       sections.push(current);
       return;
     }
@@ -63,7 +73,7 @@ function parseCurriculum(text: string): Section[] {
       const term = m[1];
       if (term.trim() !== term)
         fail(`Curriculum.md:${lineNo}: term has surrounding whitespace`);
-      if (/[*_`\[]/.test(term))
+      if (term.includes("[") || /[*_`]/.test(term))
         fail(
           `Curriculum.md:${lineNo}: term must be plain text, no markdown: ${term}`
         );
@@ -72,7 +82,7 @@ function parseCurriculum(text: string): Section[] {
     }
 
     fail(
-      `Curriculum.md:${lineNo}: only "## Section N — Title" headings and "- Term" bullets are allowed: ${line}`
+      `Curriculum.md:${lineNo}: only category headings and "- Term" bullets are allowed: ${line}`
     );
   });
 
@@ -92,39 +102,118 @@ function rewriteLinks(body: string): string {
   });
 }
 
-function main(): void {
-  const template = readFileSync(TEMPLATE, "utf8");
+function renderTrackIndexes(
+  orderedTerms: string[],
+  metadata: Map<string, TermMetadata>
+): string {
+  return Object.entries(TRACK_LABELS)
+    .map(([track, label]) => {
+      const typedTrack = track as Track;
+      const links = orderedTerms
+        .filter((term) => metadata.get(term)?.tracks.includes(typedTrack))
+        .map((term) => `- [${term}](#${headingSlug(term)})`)
+        .join("\n");
+      return [
+        "<details>",
+        `<summary>${label}</summary>`,
+        "",
+        links,
+        "",
+        "</details>",
+      ].join("\n");
+    })
+    .join("\n\n");
+}
+
+function validateTemplate(template: string): void {
   if (!template.includes(MARKER)) fail(`Template missing ${MARKER} marker`);
   if (!template.includes(TOC_MARKER))
     fail(`Template missing ${TOC_MARKER} marker`);
+  if (!template.includes(TRACKS_MARKER))
+    fail(`Template missing ${TRACKS_MARKER} marker`);
+}
 
-  const sections = parseCurriculum(readFileSync(CURRICULUM, "utf8"));
+function readTerm(
+  term: string,
+  expectedCategory: Category
+): { body: string; metadata: TermMetadata } {
+  const entryPath = join(DICT_DIR, `${term}.md`);
+  let body: string;
+  try {
+    body = readFileSync(entryPath, "utf8");
+  } catch {
+    fail(`Curriculum.md references "${term}" but ${entryPath} does not exist`);
+  }
 
+  let metadata: TermMetadata;
+  try {
+    metadata = parseTermMetadata(body);
+  } catch (error) {
+    fail(
+      `${entryPath}: ${error instanceof Error ? error.message : String(error)}`
+    );
+  }
+
+  if (metadata.category !== expectedCategory) {
+    fail(
+      `${entryPath}: category ${metadata.category} does not match Curriculum category ${expectedCategory}`
+    );
+  }
+  return { body, metadata };
+}
+
+function renderTerm(
+  term: string,
+  category: Category
+): { content: string; metadata: TermMetadata } {
+  const { body, metadata } = readTerm(term, category);
+  const trackLabels = metadata.tracks.map((track) => TRACK_LABELS[track]);
+  const facts = [...trackLabels, metadata.level, metadata.termStatus].join(
+    " · "
+  );
+  const content = [
+    `### ${term}`,
+    "",
+    `_${facts}_`,
+    "",
+    rewriteLinks(stripFrontmatter(body).trimEnd()),
+    "",
+  ].join("\n");
+  return { content, metadata };
+}
+
+function renderCurriculum(sections: Section[]): {
+  block: string;
+  metadata: Map<string, TermMetadata>;
+  orderedTerms: string[];
+  seen: Set<string>;
+} {
   const seen = new Set<string>();
   const parts: string[] = [];
+  const metadata = new Map<string, TermMetadata>();
+  const orderedTerms: string[] = [];
+
   for (const section of sections) {
     parts.push(`## ${section.heading}`, "");
     for (const term of section.terms) {
       if (seen.has(term)) fail(`Curriculum.md: duplicate term "${term}"`);
       seen.add(term);
-      const entryPath = join(DICT_DIR, `${term}.md`);
-      let body: string;
-      try {
-        body = readFileSync(entryPath, "utf8");
-      } catch {
-        fail(
-          `Curriculum.md references "${term}" but ${entryPath} does not exist`
-        );
-      }
-      parts.push(
-        `### ${term}`,
-        "",
-        rewriteLinks(stripFrontmatter(body).trimEnd()),
-        ""
-      );
+      const renderedTerm = renderTerm(term, section.category);
+      metadata.set(term, renderedTerm.metadata);
+      orderedTerms.push(term);
+      parts.push(renderedTerm.content);
     }
   }
 
+  return {
+    block: parts.join("\n").trimEnd() + "\n",
+    metadata,
+    orderedTerms,
+    seen,
+  };
+}
+
+function validateCoverage(seen: Set<string>): void {
   const onDisk = new Set(
     readdirSync(DICT_DIR)
       .filter((n) => n.endsWith(".md"))
@@ -135,9 +224,10 @@ function main(): void {
     fail(
       `dictionary/ entries not referenced by Curriculum.md: ${orphans.join(", ")}`
     );
+}
 
-  const block = parts.join("\n").trimEnd() + "\n";
-  const toc = sections
+function renderTableOfContents(sections: Section[]): string {
+  return sections
     .map((s) => {
       const terms = s.terms
         .map((t) => `- [${t}](#${headingSlug(t)})`)
@@ -152,16 +242,43 @@ function main(): void {
       ].join("\n");
     })
     .join("\n\n");
-  const banner =
+}
+
+function generatedBanner(): string {
+  return (
     "<!--\n" +
     "  GENERATED FILE — DO NOT EDIT.\n" +
     "  Source: dictionary/*.md, internal/Curriculum.md, internal/README.template.md\n" +
     "  Regenerate: npm run generate\n" +
-    "-->\n\n";
-  writeFileSync(
-    OUTPUT,
-    banner + template.replace(TOC_MARKER, toc).replace(MARKER, block)
+    "-->\n\n"
   );
 }
 
-main();
+export function main(): void {
+  const template = readFileSync(TEMPLATE, "utf8");
+  validateTemplate(template);
+  const sections = parseCurriculum(readFileSync(CURRICULUM, "utf8"));
+  const rendered = renderCurriculum(sections);
+  validateCoverage(rendered.seen);
+  const toc = renderTableOfContents(sections);
+  const trackIndexes = renderTrackIndexes(
+    rendered.orderedTerms,
+    rendered.metadata
+  );
+
+  writeFileSync(
+    OUTPUT,
+    generatedBanner() +
+      template
+        .replace(TRACKS_MARKER, trackIndexes)
+        .replace(TOC_MARKER, toc)
+        .replace(MARKER, rendered.block)
+  );
+}
+
+if (
+  process.argv[1] &&
+  resolve(process.argv[1]) === fileURLToPath(import.meta.url)
+) {
+  main();
+}

@@ -1,5 +1,10 @@
 ---
 description: The thing itself — code, transcripts, raw data. Complete and authoritative, but expensive to load into context.
+category: coding-practice
+tracks:
+  - coding
+term_status: established
+level: foundational
 ---
 
 A source of truth in its original form — the code, the conversation transcript, the raw log, the actual API response. Not an account of the thing; the thing. Counterpart to [secondary source](./Secondary%20source.md).

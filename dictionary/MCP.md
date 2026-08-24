@@ -1,5 +1,11 @@
 ---
 description: A protocol for plugging external tool servers into a harness — how an agent gets tools beyond what the harness ships with.
+category: agents-and-tools
+tracks:
+  - coding
+  - agent-systems
+term_status: established
+level: intermediate
 ---
 
 **Model Context Protocol.** A protocol for plugging external tool servers into a [harness](./Harness.md) — how an [agent](./Agent.md) gets [tools](./Tool.md) beyond what the harness ships with. The agent never "calls MCP"; it calls a tool, and the harness happens to have gotten that tool from an MCP server. Also exposes resources (read-only data) and prompts (reusable templates), but tool provision is the primary use.

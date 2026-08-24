@@ -1,5 +1,11 @@
 ---
 description: What the harness sends back after executing a tool call — file contents, output, or error. The agent's only view of the environment.
+category: agents-and-tools
+tracks:
+  - coding
+  - agent-systems
+term_status: established
+level: foundational
 ---
 
 What the [harness](./Harness.md) sends back after executing a [tool call](./Tool%20call.md) — the file contents, the command output, the error. The [agent](./Agent.md)'s only view of the [environment](./Environment.md). Travels back to the [model](./Model.md) in the _next_ [model provider request](./Model%20provider%20request.md), where the model decides what to do with it. Tool call and tool result are two ends of the same exchange, both inside one [turn](./Turn.md).

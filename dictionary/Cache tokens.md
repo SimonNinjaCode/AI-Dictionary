@@ -1,5 +1,11 @@
 ---
 description: Input tokens the provider has cached from a previous request via its prefix cache, billed at a much lower rate.
+category: models-and-inference
+tracks:
+  - coding
+  - agent-systems
+term_status: established
+level: intermediate
 ---
 
 [Input tokens](./Input%20tokens.md) the [provider](./Model%20provider.md) has cached from a previous [model provider request](./Model%20provider%20request.md) so it doesn't have to re-process them. When consecutive requests share a prefix, the provider reuses the work via its [prefix cache](./Prefix%20cache.md) and bills the cached portion at a much lower rate. The lever that makes long [sessions](./Session.md) affordable — without it, every [turn](./Turn.md) re-pays for the whole history.

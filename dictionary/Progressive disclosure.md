@@ -1,5 +1,11 @@
 ---
 description: Loading only the context an agent needs right now, with context pointers to the rest. Borrowed from UI design.
+category: context-retrieval-and-memory
+tracks:
+  - coding
+  - agent-systems
+term_status: established
+level: intermediate
 ---
 
 Loading only the [context](./Context.md) an [agent](./Agent.md) needs right now, with [context pointers](./Context%20pointer.md) to the rest. Borrowed from UI design, where it means showing users only the controls relevant to their current task and hiding the rest behind a click.

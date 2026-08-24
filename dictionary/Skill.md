@@ -1,5 +1,11 @@
 ---
 description: A teachable capability bundled as a unit — kept out of the context window until a context pointer pulls it in for the task at hand.
+category: agents-and-tools
+tracks:
+  - coding
+  - agent-systems
+term_status: established
+level: intermediate
 ---
 
 A teachable capability bundled as a unit — instructions and resources for doing one task well, kept in the [environment](./Environment.md) until a [context pointer](./Context%20pointer.md) pulls it into the [context window](./Context%20window.md) for the task at hand. The unit of [progressive disclosure](./Progressive%20disclosure.md) in a [harness](./Harness.md).

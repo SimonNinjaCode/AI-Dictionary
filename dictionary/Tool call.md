@@ -1,8 +1,17 @@
 ---
 description: The model's output naming a tool and its arguments — just structured text. The harness has to read it and execute.
+aliases:
+  - Function calling
+  - Tool calling
+category: agents-and-tools
+tracks:
+  - coding
+  - agent-systems
+term_status: established
+level: foundational
 ---
 
-The [model](./Model.md)'s output naming a [tool](./Tool.md) and its arguments — just structured text. It doesn't do anything on its own; the [harness](./Harness.md) has to read it and execute. Produced by the model in one [model provider request](./Model%20provider%20request.md).
+The [model](./Model.md)'s output naming a [tool](./Tool.md) and its arguments — a specialized form of [structured output](./Structured%20output.md). It doesn't do anything on its own; the [harness](./Harness.md) has to read it and execute. Produced by the model in one [model provider request](./Model%20provider%20request.md).
 
 The lifecycle of a tool call:
 

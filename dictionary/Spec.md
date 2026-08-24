@@ -1,5 +1,10 @@
 ---
 description: A handoff artifact describing a multi-session piece of work — what's being built, not how each session does its share. Made of tickets.
+category: coding-practice
+tracks:
+  - coding
+term_status: established
+level: foundational
 ---
 
 A [handoff artifact](./Handoff%20artifact.md) describing a multi-[session](./Session.md) piece of work — what's being built, not how each session does its share. Mutates as work progresses. Made of [tickets](./Ticket.md).

@@ -3,6 +3,12 @@ description: An isolated environment the agent runs inside — container, VM, or
 aliases:
   - Sandboxing
   - Sandbox / Sandboxing
+category: safety-permissions-and-identity
+tracks:
+  - coding
+  - agent-systems
+term_status: established
+level: foundational
 ---
 
 An isolated [environment](./Environment.md) the [agent](./Agent.md) runs inside — a container, VM, ephemeral [filesystem](./Filesystem.md), or restricted-permission shell. Limits the blast radius of agent actions: even if the agent runs destructive commands or fetches something malicious, the damage is contained. The safety substrate that makes [AFK](./AFK.md) practical.

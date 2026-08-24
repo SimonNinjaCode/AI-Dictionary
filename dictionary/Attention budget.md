@@ -1,5 +1,11 @@
 ---
 description: Each token has a finite amount of influence to distribute across the rest of the context. Per-token, doesn't grow when context does.
+category: context-retrieval-and-memory
+tracks:
+  - coding
+  - agent-systems
+term_status: heuristic
+level: intermediate
 ---
 
 Each [token](./Token.md) has a finite amount of influence to distribute across the rest of the [context](./Context.md). Heavy influence on [one relationship](./Attention%20relationship.md) leaves less for others. The budget is per-token and doesn't grow when the context does, which is why long [sessions](./Session.md) dilute.

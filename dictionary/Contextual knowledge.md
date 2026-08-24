@@ -1,5 +1,11 @@
 ---
 description: Facts the agent can read directly from the context right now. Counterpart to parametric knowledge.
+category: context-retrieval-and-memory
+tracks:
+  - coding
+  - agent-systems
+term_status: established
+level: intermediate
 ---
 
 Facts the [agent](./Agent.md) can read directly from the [context](./Context.md) right now — the user's task, files the agent has read in, [tool results](./Tool%20result.md), [AGENTS.md](./AGENTS.md.md) content loaded at [session](./Session.md) start. Counterpart to [parametric knowledge](./Parametric%20knowledge.md): parametric is _recalled_ from the parameters; contextual is _read_ from the [window](./Context%20window.md). [Hallucinations](./Hallucination.md) are much less common when the agent works from contextual knowledge — the answer is right in front of it, not dredged up from a blurred memory.

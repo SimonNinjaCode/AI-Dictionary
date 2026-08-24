@@ -1,5 +1,10 @@
 ---
 description: A working pattern where the user accepts the agent's code without human review. The diff is treated as opaque.
+category: coding-practice
+tracks:
+  - coding
+term_status: established
+level: foundational
 ---
 
 A working pattern where the user accepts the [agent](./Agent.md)'s code without [human review](./Human%20review.md). The diff is treated as opaque — what matters is whether the program behaves, not what's inside. [Automated review](./Automated%20review.md) and [automated checks](./Automated%20check.md) may still run; vibe coding is silent on both.

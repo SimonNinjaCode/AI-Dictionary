@@ -1,5 +1,11 @@
 ---
 description: What the harness shows the user before executing a tool call that isn't pre-approved. The mechanism for putting a human in the loop.
+category: safety-permissions-and-identity
+tracks:
+  - coding
+  - agent-systems
+term_status: established
+level: foundational
 ---
 
 What the [harness](./Harness.md) shows the user before executing a [tool call](./Tool%20call.md) that isn't pre-approved. The [model](./Model.md) produces a tool call; instead of running it immediately, the harness pauses and asks. Approve and it runs; deny and the harness reports the denial back to the model as a [tool result](./Tool%20result.md). The mechanism by which a harness puts a human in the [loop](./Human-in-the-loop.md) for risky or sensitive actions.

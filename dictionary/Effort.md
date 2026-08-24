@@ -3,6 +3,13 @@ description: A dial for how much reasoning the model does before it answers. Mor
 aliases:
   - Reasoning effort
   - Thinking effort
+  - Extended thinking
+category: models-and-inference
+tracks:
+  - coding
+  - agent-systems
+term_status: established
+level: foundational
 ---
 
 Effort is a dial for how much reasoning a [model](./Model.md) does before it answers. Set per [model provider request](./Model%20provider%20request.md), it controls the length of the thinking the model works through before it starts writing the response you see. That thinking is generated at [inference](./Inference.md) time like everything else; the [harness](./Harness.md) often hides it, but it's real work the model is doing.

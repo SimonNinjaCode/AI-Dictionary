@@ -1,17 +1,20 @@
 {
-  "name": "ai-coding-dictionary",
+  "name": "ai-dictionary",
   "private": true,
   "type": "module",
   "scripts": {
+    "check": "npm run typecheck && npm run test && npm run check:dictionary && npm run check:format && npm run check:readme",
+    "check:dictionary": "tsx internal/check-dictionary.ts",
+    "check:format": "prettier --check .",
+    "check:readme": "tsx internal/check-readme.ts",
     "generate": "tsx internal/generate-readme.ts",
-    "prepare": "husky"
+    "test": "tsx --test internal/*.test.ts",
+    "typecheck": "tsc -p internal/tsconfig.json"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
-    "husky": "^9.1.7",
-    "lint-staged": "^16.4.0",
     "prettier": "^3.8.3",
-    "tsx": "^4.19.2",
+    "tsx": "^4.23.12",
     "typescript": "^5.7.2"
   }
 }

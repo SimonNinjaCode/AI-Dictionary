@@ -1,5 +1,11 @@
 ---
 description: Ending the current session and starting a fresh one. The next message begins with an empty session and an empty context window.
+category: context-retrieval-and-memory
+tracks:
+  - coding
+  - agent-systems
+term_status: established
+level: foundational
 ---
 
 Ending the current [session](./Session.md) and starting a fresh one. The next message begins with an empty session and an empty [context window](./Context%20window.md). Usually user-driven.

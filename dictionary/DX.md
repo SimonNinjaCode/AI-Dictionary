@@ -2,6 +2,11 @@
 description: "Developer experience: how easy a codebase and its toolchain make it for humans to do good work — docs, feedback speed, errors."
 aliases:
   - Developer experience
+category: coding-practice
+tracks:
+  - coding
+term_status: established
+level: foundational
 ---
 
 Developer experience — how easy a codebase and its toolchain make it for humans to do good work. Good DX is fast feedback, clear error messages, documentation that answers the question you actually have, and setup that works on the first try. The term long predates AI coding; it's in this dictionary mainly as the contrast for [AX](./AX.md).

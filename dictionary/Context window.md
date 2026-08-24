@@ -1,5 +1,11 @@
 ---
 description: Everything the model sees on each model provider request. Finite, model-specific, the only surface through which the model perceives.
+category: context-retrieval-and-memory
+tracks:
+  - coding
+  - agent-systems
+term_status: established
+level: foundational
 ---
 
 Everything the [model](./Model.md) sees on each [model provider request](./Model%20provider%20request.md). Finite, model-specific, and the _only_ surface through which the model perceives anything.

@@ -1,5 +1,11 @@
 ---
 description: A mention in one document that points to another, so the agent can pull it into context only when the task calls for it.
+category: context-retrieval-and-memory
+tracks:
+  - coding
+  - agent-systems
+term_status: established
+level: intermediate
 ---
 
 A mention in one document that points to another, so the [agent](./Agent.md) can pull it into the [context window](./Context%20window.md) only when the task calls for it. The unit [progressive disclosure](./Progressive%20disclosure.md) is built from.
