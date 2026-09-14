@@ -1,2 +1,8 @@
 node_modules/
 .DS_Store
+.next/
+out/
+.playwright-cli/
+output/playwright/
+graphify-out/
+tsconfig.tsbuildinfo
