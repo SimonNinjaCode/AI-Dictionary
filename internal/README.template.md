@@ -1,7 +1,3 @@
-<p align="center">
-  <img src="./ai.png" alt="AI Dictionary" width="220">
-</p>
-
 # AI Dictionary
 
 **AI coding can feel like it's just for experts**. Unexplained jargon. Mysterious failures. Bills that don't seem to match the work.

@@ -8,11 +8,26 @@
     "check:format": "prettier --check .",
     "check:readme": "tsx internal/check-readme.ts",
     "generate": "tsx internal/generate-readme.ts",
+    "generate:data": "tsx internal/generate-app-data.ts && prettier --write data/terms.json",
+    "dev": "npm run generate:data && next dev",
+    "build": "npm run generate:data && next build",
+    "start": "next start",
     "test": "tsx --test internal/*.test.ts",
-    "typecheck": "tsc -p internal/tsconfig.json"
+    "typecheck": "tsc -p internal/tsconfig.json && tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "next": "^16.2.9",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1",
+    "three": "^0.185.0"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
+    "@types/react": "^19.2.4",
+    "@types/react-dom": "^19.2.4",
+    "@types/three": "^0.185.0",
     "prettier": "^3.8.3",
     "tsx": "^4.23.12",
     "typescript": "^5.7.2"
