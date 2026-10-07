@@ -79,6 +79,7 @@ the material, not the meaning of the terms.
 - [Computer use](#computer-use)
 - [MCP](#mcp)
 - [Skill](#skill)
+- [Hook](#hook)
 - [Subagent](#subagent)
 - [Workflow](#workflow)
 - [Multi-agent system](#multi-agent-system)
@@ -88,6 +89,7 @@ the material, not the meaning of the terms.
 - [Handoff artifact](#handoff-artifact)
 - [Spec](#spec)
 - [Ticket](#ticket)
+- [Worktree](#worktree)
 - [AGENTS.md](#agentsmd)
 - [AFK](#afk)
 - [Vibe coding](#vibe-coding)
@@ -104,11 +106,14 @@ the material, not the meaning of the terms.
 - [Sycophancy](#sycophancy)
 - [Hallucination](#hallucination)
 - [Prompt injection](#prompt-injection)
+- [Lethal trifecta](#lethal-trifecta)
 - [Guardrails](#guardrails)
 - [Permission request](#permission-request)
 - [Permission mode](#permission-mode)
 - [Agent mode](#agent-mode)
 - [Sandbox](#sandbox)
+- [Agent identity](#agent-identity)
+- [Least privilege](#least-privilege)
 - [Human-in-the-loop](#human-in-the-loop)
 
 </details>
@@ -170,6 +175,7 @@ the material, not the meaning of the terms.
 - [Agent framework](#agent-framework)
 - [Agent SDK](#agent-sdk)
 - [Skill](#skill)
+- [Hook](#hook)
 - [Subagent](#subagent)
 - [Workflow](#workflow)
 - [Multi-agent system](#multi-agent-system)
@@ -182,11 +188,14 @@ the material, not the meaning of the terms.
 - [Sycophancy](#sycophancy)
 - [Hallucination](#hallucination)
 - [Prompt injection](#prompt-injection)
+- [Lethal trifecta](#lethal-trifecta)
 - [Guardrails](#guardrails)
 - [Permission request](#permission-request)
 - [Permission mode](#permission-mode)
 - [Agent mode](#agent-mode)
 - [Sandbox](#sandbox)
+- [Agent identity](#agent-identity)
+- [Least privilege](#least-privilege)
 - [Human-in-the-loop](#human-in-the-loop)
 - [Durable execution](#durable-execution)
 
@@ -264,6 +273,7 @@ the material, not the meaning of the terms.
 - [Agent framework](#agent-framework)
 - [Agent SDK](#agent-sdk)
 - [Skill](#skill)
+- [Hook](#hook)
 - [Subagent](#subagent)
 
 </details>
@@ -287,6 +297,7 @@ the material, not the meaning of the terms.
 - [Handoff artifact](#handoff-artifact)
 - [Spec](#spec)
 - [Ticket](#ticket)
+- [Worktree](#worktree)
 - [AGENTS.md](#agentsmd)
 - [AFK](#afk)
 - [Vibe coding](#vibe-coding)
@@ -315,11 +326,14 @@ the material, not the meaning of the terms.
 - [Sycophancy](#sycophancy)
 - [Hallucination](#hallucination)
 - [Prompt injection](#prompt-injection)
+- [Lethal trifecta](#lethal-trifecta)
 - [Guardrails](#guardrails)
 - [Permission request](#permission-request)
 - [Permission mode](#permission-mode)
 - [Agent mode](#agent-mode)
 - [Sandbox](#sandbox)
+- [Agent identity](#agent-identity)
+- [Least privilege](#least-privilege)
 - [Human-in-the-loop](#human-in-the-loop)
 
 </details>
@@ -1134,7 +1148,7 @@ A coding agent may read any repository file automatically, ask before editing, a
 
 Higher autonomy removes waiting. It also lets an early mistake travel farther before a person sees it. A wrong assumption in a supervised turn may produce one bad suggestion. The same assumption during an [AFK](#afk) run may shape a branch, migration, and test suite. Automated checks reduce some risk, but they only cover properties they assert.
 
-Autonomy comes from several controls working together. The [permission mode](#permission-mode) decides which tool calls need approval. The environment limits blast radius. Budgets limit time, tokens, requests, or money. Checkpoints decide when a human reviews state. The system should grant autonomy where failures are cheap and reversible, then narrow it as consequences grow.
+Autonomy comes from several controls working together. The [permission mode](#permission-mode) decides which tool calls need approval. The environment limits blast radius, and [least privilege](#least-privilege) keeps the agent's credentials from widening it. Budgets limit time, tokens, requests, or money. Checkpoints decide when a human reviews state. The system should grant autonomy where failures are cheap and reversible, then narrow it as consequences grow.
 
 _Avoid:_ equating autonomy with intelligence. A capable model can operate under tight approval gates, while a weak loop can run unattended and cause considerable damage.
 
@@ -1148,7 +1162,7 @@ _Usage:_
 
 _AI coding · Agent systems · foundational · established_
 
-Everything around the [model](#model) that turns it into an [agent](#agent): [tools](#tool), [system prompt](#system-prompt), [context-window management](#context-window), permissions, hooks. **Claude.ai** and **Claude Code** run on the same model but behave differently because their harnesses differ.
+Everything around the [model](#model) that turns it into an [agent](#agent): [tools](#tool), [system prompt](#system-prompt), [context-window management](#context-window), permissions, [hooks](#hook). **Claude.ai** and **Claude Code** run on the same model but behave differently because their harnesses differ.
 
 The model itself only does one thing: take text in, produce text out. It can't read a file, run a command, or remember the last [turn](#turn). The harness supplies all of that. It assembles the [context](#context) for each [model provider request](#model-provider-request), executes the [tool calls](#tool-call) the model asks for, feeds the [tool results](#tool-result) back in, stores the [session](#session) history, asks you for permission before risky actions, and decides when to [compact](#compaction). The [agent loop](#agent-loop) is run by the harness.
 
@@ -1375,6 +1389,8 @@ The cost is paid in [context](#context). Every tool a server advertises arrives 
 
 Many harnesses now mitigate this with tool search: instead of the full definitions, the context holds a [context pointer](#context-pointer) to the available tools — the agent searches for a tool by name or purpose and loads its definition only when it needs it. If your harness doesn't do this, the up-front cost still applies, and it's worth enabling only the servers a project actually needs.
 
+An MCP server is also a trust decision. Its tool descriptions are written by the server's author and land in the context window as text the model reads, and its tool results are content the model acts on — both are paths for [prompt injection](#prompt-injection). A local server runs as a process with your permissions; a remote one receives whatever the agent sends it. A server that reads untrusted content, or can send data out, supplies one leg of the [lethal trifecta](#lethal-trifecta) to every session it's enabled in. Install servers the way you would install a dependency: from sources you trust, with the narrowest credentials that work.
+
 _Usage:_
 
 "The agent needs to read tickets from Linear."
@@ -1449,6 +1465,35 @@ _Usage:_
 
 "As a skill — the agent loads it only when the task involves deploys. In AGENTS.md it'd burn tokens on every [turn](#turn) for something we use weekly."
 
+### Hook
+
+_AI coding · Agent systems · intermediate · established_
+
+A command the [harness](#harness) runs automatically at a fixed point in the [agent loop](#agent-loop) — before a [tool call](#tool-call) executes, after one completes, when a [session](#session) starts, when the [agent](#agent) ends its [turn](#turn). The [model](#model) doesn't decide whether a hook runs; the harness runs it every time the event occurs. The idea is the same as git hooks, which run scripts at points such as pre-commit.
+
+Hooks exist because instructions are requests. A line in [AGENTS.md](#agentsmd) saying "run the formatter after editing" depends on the model remembering it, and in a long session [attention degradation](#attention-degradation) makes it slip. The familiar result is an instruction stated clearly in AGENTS.md and half the commits still arriving unformatted. A hook that runs the formatter after every edit removes the dependency on memory.
+
+| Event              | When it runs                                               | Typical use                                                                          |
+| ------------------ | ---------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| Before a tool call | After the model emits the call, before the harness runs it | Block a dangerous command, enforce a path rule, ask for approval                     |
+| After a tool call  | After execution, before the result returns to the model    | Run the formatter or an [automated check](#automated-check) on the edited file |
+| Session start      | Before the first turn                                      | Load the current branch, open tickets, or other fresh context                        |
+| Turn end           | When the agent yields                                      | Run the test suite; send a notification during an [AFK](#afk) run                |
+
+Event names and capabilities vary by harness.
+
+A blocking hook works like a denied [permission request](#permission-request): its message goes back to the model as a [tool result](#tool-result), and the model chooses another approach. Output from an after-call hook can also be fed back, so the agent self-corrects from it. That makes a hook a [guardrail](#guardrails) that runs outside the model.
+
+Hooks are code running with your permissions on every matching event. A slow hook slows every tool call, and a hook defined in a cloned repository's configuration runs on your machine. Review hook configuration as you would any other script in the repository.
+
+_Avoid:_ confusing hooks with [skills](#skill). A skill is instructions the model reads when relevant; a hook is code the harness runs regardless.
+
+_Usage:_
+
+"I've told it three times in AGENTS.md to run prettier. It still forgets."
+
+"Add an after-edit hook that runs prettier on the changed file. It runs whether the model remembers or not."
+
 ### Subagent
 
 _AI coding · Agent systems · intermediate · established_
@@ -1495,7 +1540,7 @@ A system where multiple [agents](#agent) have separate contexts, roles, or respo
 
 Multiple agents are useful when work separates cleanly. One can inspect a backend contract while another checks the frontend usage. A reviewer can receive a fresh context instead of inheriting the assumptions that produced the code. A coordinator can combine results after the independent work finishes. These are information-flow benefits, not evidence that a crowd of models is inherently smarter than one.
 
-The system pays an orchestration cost. Tasks must be divided, each agent must receive enough context, outputs must use compatible formats, and conflicts must be resolved. Parallel work can also duplicate searches or produce incompatible edits. The apparent throughput of five active agents means little if one person spends longer reviewing and merging their results than a single agent would have spent doing the task.
+The system pays an orchestration cost. Tasks must be divided, each agent must receive enough context, outputs must use compatible formats, and conflicts must be resolved. Parallel work can also duplicate searches or produce incompatible edits. Separate [worktrees](#worktree) stop concurrent edits from overwriting each other's files but don't resolve conflicts between them. The apparent throughput of five active agents means little if one person spends longer reviewing and merging their results than a single agent would have spent doing the task.
 
 A [subagent](#subagent) is one common implementation, but the terms are not identical. A subagent has a parent and a return path. A multi-agent system may instead use peers, a shared queue, a [workflow](#workflow), or an [orchestration layer](#orchestration-layer) that assigns work dynamically.
 
@@ -1658,13 +1703,38 @@ The defining constraint is the size: one session. A ticket should be completable
 
 A good ticket is written for a reader with no other context. The goal, the acceptance criteria, and [context pointers](#context-pointer) to the relevant files and decisions — enough that the session can start working without re-deriving what the last one knew.
 
-The dependency graph is also what unlocks parallelism. Independent tickets — the leaves of the graph — can each run in their own session at the same time. This is an effective way of running multiple agents at once.
+The dependency graph is also what unlocks parallelism. Independent tickets — the leaves of the graph — can each run in their own session at the same time, usually each in its own [worktree](#worktree) so the edits don't collide. This is an effective way of running multiple agents at once.
 
 _Usage:_
 
 "Where do I start on the migration spec?"
 
 "Look at the ticket graph — the schema change blocks the backfill, the backfill blocks the API switch. Pick a leaf and run a session on it."
+
+### Worktree
+
+_AI coding · intermediate · established_
+
+A separate working directory checked out from the same git repository, created with `git worktree add`. Each worktree has its own branch and its own files on disk, while all of them share one repository history. The common way to run several [agents](#agent) on one codebase at the same time.
+
+Two agents in one checkout share one [filesystem](#filesystem), so each one's edits land in the other's working tree. A test run picks up the other agent's half-finished change and fails for reasons neither caused. A formatter rewrites files the other agent is in the middle of editing. A `git commit` sweeps in changes from both tasks. Each agent's picture of the files is a snapshot from its last read of the [environment](#environment), and the other agent keeps making it stale.
+
+| Step   | Command                                                  | What happens                                          |
+| ------ | -------------------------------------------------------- | ----------------------------------------------------- |
+| Create | `git worktree add ../app-ticket-42 -b ticket-42`         | New directory with a new branch checked out           |
+| Work   | Start an agent [session](#session) in that directory | Edits, test runs, and commits stay on that branch     |
+| Review | Open a PR from the branch                                | [Human review](#human-review) as for any branch |
+| Remove | `git worktree remove ../app-ticket-42`                   | Directory deleted; the branch and commits remain      |
+
+Worktrees share history, not runtime state. Each directory needs its own dependency install and build output, untracked files such as `.env` aren't copied, and dev servers or test databases on fixed ports collide. Git also allows a branch to be checked out in only one worktree at a time. Worktrees isolate files, not side effects: two agents running migrations against the same local database still interfere, so a worktree is not a [sandbox](#sandbox).
+
+Parallel worktrees help only when the work is independent. They prevent agents from overwriting each other's files; they don't prevent merge conflicts when two [tickets](#ticket) change the same code.
+
+_Usage:_
+
+"I ran two agents on the same repo and one keeps failing on tests the other one broke."
+
+"They're sharing a working tree. Give each its own worktree on its own branch, and merge the branches when both are done."
 
 ### AGENTS.md
 
@@ -1690,7 +1760,7 @@ _Usage:_
 
 _AI coding · intermediate · project_
 
-Away from keyboard. A working pattern where the user kicks off a [session](#session) and leaves the [agent](#agent) to run unattended. It raises throughput in [AI](#ai) coding: several AFK sessions can run in parallel while you do something else. Usually requires a permissive [permission mode](#permission-mode) plus [sandboxing](#sandbox) to be safe.
+Away from keyboard. A working pattern where the user kicks off a [session](#session) and leaves the [agent](#agent) to run unattended. It raises throughput in [AI](#ai) coding: several AFK sessions can run in parallel, each in its own [worktree](#worktree), while you do something else. Usually requires a permissive [permission mode](#permission-mode) plus [sandboxing](#sandbox) to be safe.
 
 When you're not there, the agent handles ambiguity differently. While you're watching, an ambiguous decision surfaces as a question and you answer it; once you've walked away, the agent picks a default and keeps going, and every later decision builds on that guess. The characteristic failure is coming back to hours of finished, confident work built on a wrong call made in the first ten minutes. The work isn't sloppy — it's coherent, just coherent about the wrong thing.
 
@@ -1832,7 +1902,7 @@ _AI coding · Agent systems · foundational · established_
 
 A deterministic verification that runs in the [environment](#environment) — tests, type checks, lints, build, pre-commit hooks. Pass/fail, no judgement. The signal an [agent](#agent) can self-correct from without involving anyone else. A flaky test is a broken check, not a non-check; automated checks are deterministic _by design_.
 
-Self-correction works as a loop. The agent makes a change, runs the check as a [tool call](#tool-call), and the failure output lands in its [context window](#context-window) — a type error with a file and line, a failing assertion with expected and actual values. That's enough for the agent to fix the problem and run the check again, around and around until it passes, with no human in the loop. Determinism is what makes the loop trustworthy: the same code always produces the same verdict, so a pass means something. A flaky check poisons this — the agent "fixes" code that was fine, or retries past a real failure.
+Self-correction works as a loop. The agent makes a change, runs the check as a [tool call](#tool-call), and the failure output lands in its [context window](#context-window) — a type error with a file and line, a failing assertion with expected and actual values. That's enough for the agent to fix the problem and run the check again, around and around until it passes, with no human in the loop. A [hook](#hook) can run checks after every edit, so the agent sees failures without having to remember to run them. Determinism is what makes the loop trustworthy: the same code always produces the same verdict, so a pass means something. A flaky check poisons this — the agent "fixes" code that was fine, or retries past a real failure.
 
 This is why good checks are a large part of a codebase's [AX](#ax). An agent in a repo with strict types, a fast test suite, and a linter catches most of its own mistakes before you see them; an agent in a repo with none of those ships whatever it produces. The difference matters most in [AFK](#afk) runs, where checks are the only verification happening during the run. But a check only catches what it asserts — green checks mean the asserted properties hold, not that the code is right. The judgement-shaped gaps are what [automated review](#automated-review) and [human review](#human-review) are for. An [eval](#eval) runs these or other scoring methods across a representative set of agent tasks.
 
@@ -1998,7 +2068,7 @@ Prompt injection exploits an architectural ambiguity. Models receive instruction
 
 Coding agents are exposed because repositories contain text written by many people and because the agent may have filesystem, shell, network, or publishing tools. An injected instruction has little effect if the model can only summarize public text. It becomes more serious when the [permission mode](#permission-mode) lets generated decisions trigger external actions.
 
-Treat external content as data, restrict tools by default, isolate sensitive environments, validate important actions in code, and require approval where consequences are hard to reverse. [Guardrails](#guardrails) can reduce exposure, but no prompt can guarantee that another prompt will never influence the model.
+Treat external content as data, restrict tools by default, isolate sensitive environments, validate important actions in code, and require approval where consequences are hard to reverse. [Guardrails](#guardrails) can reduce exposure, but no prompt can guarantee that another prompt will never influence the model. How much damage an injection can do depends on what else the agent can reach; the [lethal trifecta](#lethal-trifecta) names the combination that turns it into data theft.
 
 Prompt injection differs from a jailbreak. Injection arrives through content the system processes, often without the user's knowledge. A jailbreak is a user deliberately trying to bypass the system's rules.
 
@@ -2010,13 +2080,39 @@ _Usage:_
 
 "Treat repository content as untrusted. Block the network action outside the model and review why that file entered authoritative context."
 
+### Lethal trifecta
+
+_AI coding · Agent systems · intermediate · emerging_
+
+The combination of three capabilities in one [agent](#agent): access to private data, exposure to untrusted content, and a way to communicate externally. With all three present, a [prompt injection](#prompt-injection) in the untrusted content can instruct the agent to read the private data and send it out. Simon Willison named the pattern in [June 2025](https://simonwillison.net/2025/Jun/16/the-lethal-trifecta/).
+
+| Leg                    | Examples for a coding agent                                                                                       |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| Private data           | Source code, environment variables, credentials, customer records in a database it can query                      |
+| Untrusted content      | Web pages, dependency READMEs, issue comments, email, [tool results](#tool-result) from third-party servers |
+| External communication | Network requests, pushing to a public branch, opening an issue, rendering an image URL that encodes data          |
+
+The framing is useful because prompt injection can't be reliably filtered. [Guardrails](#guardrails) that catch most attacks still let some through. The trifecta replaces "can we detect the attack?" with "can the attack succeed if it isn't detected?". Remove any one leg and the theft path closes: without private data there is nothing to take, without untrusted content there is no attacker instruction, and without an outbound channel nothing leaves.
+
+The legs rarely arrive together by design. They accumulate one [tool](#tool) at a time: a database tool for one task, a web-fetch tool for another, an [MCP](#mcp) server that can post messages for a third. Each addition looks harmless on its own, and nobody reviews the combination. Review the full set of tools available in a [session](#session), not each tool separately.
+
+For coding agents, the outbound leg is usually the easiest to cut: a [sandbox](#sandbox) with no network, or an allowlist of hosts. Some outbound channels don't look like network access. A commit pushed to a public repository is external communication.
+
+_Avoid:_ treating "the data is internal" as a mitigation. Internal data is the leg the attacker wants.
+
+_Usage:_
+
+"The support agent reads incoming email, looks up customer records, and can send replies. Is that acceptable?"
+
+"That's the lethal trifecta in one agent. An email can instruct it to reply with another customer's records. Split it: draft the reply without database access, and put the record lookup behind a human approval."
+
 ### Guardrails
 
 _AI coding · Agent systems · foundational · established_
 
 Controls that constrain what an [agent](#agent) may receive, decide, produce, or do before effects reach the [environment](#environment). Guardrails can exist at input, model, tool, output, and approval boundaries.
 
-Prompt instructions are the weakest form because the same model interprets both the rule and the content that may conflict with it. Stronger controls run outside the model. A [tool](#tool) schema can reject invalid arguments. A [sandbox](#sandbox) can prevent access to the host filesystem. A [permission request](#permission-request) can require approval before publishing. An output validator can block data that does not match a contract.
+Prompt instructions are the weakest form because the same model interprets both the rule and the content that may conflict with it. Stronger controls run outside the model. Credentials scoped by [least privilege](#least-privilege) limit what any tool call can do at all. A [tool](#tool) schema can reject invalid arguments. A [sandbox](#sandbox) can prevent access to the host filesystem. A [permission request](#permission-request) can require approval before publishing. An output validator can block data that does not match a contract.
 
 | Boundary    | Example control                                    |
 | ----------- | -------------------------------------------------- |
@@ -2130,13 +2226,69 @@ Isolation comes in grades:
 | Container        | Fresh filesystem, no credentials mounted, discarded after  | Anything the agent does to its own machine |
 | VM / cloud       | A separate machine entirely, often provided by the harness | Everything, including kernel-level escapes |
 
-What no sandbox contains: actions that leave it legitimately. An agent with your git credentials can push; one with network access can call production APIs, and a [prompt injection](#prompt-injection) in a file it reads can tell it to. Decide what crosses the boundary before deciding how thick to make it.
+What no sandbox contains: actions that leave it legitimately. An agent with your git credentials can push; one with network access can call production APIs, and a [prompt injection](#prompt-injection) in a file it reads can tell it to. Decide what crosses the boundary before deciding how thick to make it. Credentials are the main thing that crosses: an agent with its own [agent identity](#agent-identity), scoped by [least privilege](#least-privilege), carries less across than one using yours.
 
 _Usage:_
 
 "I want to let it run [bypass-permissions](#agent-mode) overnight but I'm not ready for that."
 
 "Put it in a sandbox — fresh container, no credentials mounted, no network out. Worst case it nukes its own filesystem and you discard the container."
+
+### Agent identity
+
+_AI coding · Agent systems · intermediate · emerging_
+
+The identity an [agent](#agent) authenticates as when its [tool calls](#tool-call) reach other systems — a repository host, a ticket system, a database, an email API. It decides whose permissions every action carries and whose name the audit log records. An agent has no identity of its own unless someone gives it one; by default it uses whatever credentials are present in its [environment](#environment).
+
+On a developer machine, that default means your identity. A coding agent runs in your shell, so it inherits your git credentials, your cloud CLI session, and any tokens in your environment variables. The consequence shows up later: a force-push, a closed ticket, or a changed cloud setting appears in the log under your name, and the log can't tell whether you did it or the agent did.
+
+There are three common arrangements:
+
+| Arrangement               | Whose permissions apply                                            | What the log shows                         |
+| ------------------------- | ------------------------------------------------------------------ | ------------------------------------------ |
+| Borrowed user credentials | Everything the user can do                                         | The user                                   |
+| Delegated (on-behalf-of)  | The overlap of what the user can do and what the agent was granted | The user, with the agent as the acting app |
+| Own identity              | Only what the agent's identity was granted                         | The agent                                  |
+
+An own identity can be a service account, an application registration with its own permissions, or an agent-specific identity type; some identity platforms now offer one, such as Microsoft Entra Agent ID.
+
+A separate identity is what makes [least privilege](#least-privilege) workable for agents. You can grant the scopes the task needs, revoke them without touching anyone's account, and read the logs to see what the agent did. It also bounds [prompt injection](#prompt-injection): an injected instruction can do only what the identity allows. A [sandbox](#sandbox) limits what the agent can reach on the machine; identity limits what it can do once a request leaves the machine.
+
+_Avoid:_ treating "the agent runs as me" as a neutral default. It grants the agent every permission you hold.
+
+_Usage:_
+
+"Who closed forty tickets in the backlog last night?"
+
+"The log says you. The [AFK](#afk) agent was running with your API token. Give it its own identity with write access to one project, and the log will show which of you did what."
+
+### Least privilege
+
+_AI coding · Agent systems · foundational · established_
+
+Granting an [agent](#agent) only the access its current task needs — the [tools](#tool), files, network destinations, and credential scopes — and nothing it might need later. The principle is old; Saltzer and Schroeder listed it among their protection design principles in 1975. Agents make it more pressing because the party choosing actions can be wrong or redirected.
+
+Any action the agent's access allows can happen: through a misread instruction, a [hallucinated](#hallucination) path, or a [prompt injection](#prompt-injection) in content it reads. You can't fully control which actions the agent chooses. You can control which ones are possible. Least privilege changes the safety question from "will the agent behave?" to "what is the worst it can do?", which is easier to answer.
+
+Over-privilege usually accumulates rather than being granted at once. A broad token is added to unblock one task, stays in the [environment](#environment), and is available to every later run, including runs on unrelated tasks.
+
+| Layer       | Narrow grant                                                                  | Broad grant                                              |
+| ----------- | ----------------------------------------------------------------------------- | -------------------------------------------------------- |
+| Tools       | Only the tools the task uses; read-only variants where they exist             | Every tool the harness and [MCP](#mcp) servers offer |
+| Filesystem  | The project directory                                                         | The home directory                                       |
+| Network     | An allowlist of hosts                                                         | Unrestricted outbound access                             |
+| Credentials | A short-lived token scoped to one repository or project                       | A personal token with full account access                |
+| Approval    | A [permission request](#permission-request) before irreversible actions | Bypass everywhere                                        |
+
+Narrow grants create friction: the agent hits a limit and asks, or fails. That friction is useful when the action is consequential and wasted when it isn't. Widen grants for reversible work inside a [sandbox](#sandbox); keep them narrow where effects leave it. Credentials are easiest to scope when the agent has its own [agent identity](#agent-identity) instead of borrowing yours.
+
+_Avoid:_ "the agent needs admin to be useful". It usually needs one or two specific permissions that nobody has listed yet.
+
+_Usage:_
+
+"The agent only needs to read the staging database. Why does its connection string use the admin user?"
+
+"Because that was the one in `.env`. Create a read-only role for it. A bad query then fails instead of dropping a table."
 
 ### Human-in-the-loop
 

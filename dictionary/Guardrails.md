@@ -12,7 +12,7 @@ level: foundational
 
 Controls that constrain what an [agent](./Agent.md) may receive, decide, produce, or do before effects reach the [environment](./Environment.md). Guardrails can exist at input, model, tool, output, and approval boundaries.
 
-Prompt instructions are the weakest form because the same model interprets both the rule and the content that may conflict with it. Stronger controls run outside the model. A [tool](./Tool.md) schema can reject invalid arguments. A [sandbox](./Sandbox.md) can prevent access to the host filesystem. A [permission request](./Permission%20request.md) can require approval before publishing. An output validator can block data that does not match a contract.
+Prompt instructions are the weakest form because the same model interprets both the rule and the content that may conflict with it. Stronger controls run outside the model. Credentials scoped by [least privilege](./Least%20privilege.md) limit what any tool call can do at all. A [tool](./Tool.md) schema can reject invalid arguments. A [sandbox](./Sandbox.md) can prevent access to the host filesystem. A [permission request](./Permission%20request.md) can require approval before publishing. An output validator can block data that does not match a contract.
 
 | Boundary    | Example control                                    |
 | ----------- | -------------------------------------------------- |
