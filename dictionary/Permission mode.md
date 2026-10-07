@@ -23,7 +23,7 @@ Choosing a rung is a trade between safety and interruption, and both failure mod
 
 The loose end is most defensible inside a sandbox, where the blast radius of a bad [tool](./Tool.md) call is contained. Outside one, most people settle on auto-approving reads and keeping a [human in the loop](./Human-in-the-loop.md) for anything irreversible.
 
-Permission gating is one [guardrail](./Guardrails.md) within a wider permission model. The model defines the rules and scopes; the mode selects a practical preset for a session.
+Permission gating is one [guardrail](./Guardrails.md) within a wider permission policy. The policy defines the rules and scopes; the mode selects a practical preset for a session.
 
 _Usage:_
 

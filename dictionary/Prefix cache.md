@@ -14,7 +14,7 @@ The [provider](./Model%20provider.md)-side store that lets consecutive [model pr
 
 The cache pays off because sessions grow append-only. Every request re-sends the whole history as [input tokens](./Input%20tokens.md) (see that entry for why), and in a normal [session](./Session.md) the history only changes at the end — each request is the previous one plus a few new messages. The provider processes the long shared beginning once, stores the result, and picks up from where the prefix ends. Without the cache, a 50-[turn](./Turn.md) session would pay to re-process turn one fifty times.
 
-Caches also expire. How long an entry stays warm varies per model provider — typically minutes, not hours. Leave a session idle past the window and the next request rebuilds the prefix at full price once before caching resumes. This is mostly a [harness](./Harness.md) builder's concern; as a user, the visible effect is that requests after a long pause cost more than the ones before it.
+Caches also expire. How long an entry stays warm depends on the model provider and the request settings — from a few minutes up to a day. Leave a session idle past the window and the next request rebuilds the prefix at full price once before caching resumes. Some providers also charge a premium to write a prefix into the cache, so a prefix that is written but rarely reused can cost more than no caching at all. This is mostly a [harness](./Harness.md) builder's concern; as a user, the visible effect is that requests after a long pause cost more than the ones before it.
 
 _Usage:_
 

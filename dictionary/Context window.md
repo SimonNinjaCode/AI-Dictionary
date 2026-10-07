@@ -20,4 +20,4 @@ _Usage:_
 
 "Can I just paste the whole monorepo into the prompt?"
 
-"The context window's 200k tokens — that's maybe a fifth of the repo. Pick the files the task touches, leave the rest behind a tool call."
+"The context window holds a fraction of the repo, and everything in it is re-sent on every request. Pick the files the task touches, leave the rest behind a tool call."

@@ -339,17 +339,17 @@ _AI coding · Agent systems · foundational · established_
 
 A moving label, not a technology. "AI" doesn't name a fixed thing the way [model](#model) or [token](#token) does — it points at whatever computers can newly, impressively do. Right now it points at large language models. It has pointed at very different things before:
 
-| Era       | What "AI" meant                                                                                       |
-| --------- | ----------------------------------------------------------------------------------------------------- |
-| 1950s     | Symbolic reasoning — theorem provers, checkers programs.                                              |
-| 1960s–70s | Rule-based symbolic programs — ELIZA, SHRDLU.                                                         |
-| 1980s     | Expert systems — thousands of hand-written if-then rules encoding human expertise.                    |
-| 1990s     | Game-tree search — Deep Blue beating Kasparov (1997). Researchers avoided the word "AI" entirely      |
-| 2000s     | Statistical machine learning — spam filters, recommenders. Still sold as "machine learning", not "AI" |
-| 2010s     | Deep learning — image recognition (AlexNet, 2012), AlphaGo (2016).                                    |
-| 2020s     | Large language models — ChatGPT (2022) made "AI" mean chatbots                                        |
+| Era       | What "AI" meant                                                                                        |
+| --------- | ------------------------------------------------------------------------------------------------------ |
+| 1950s     | Symbolic reasoning — theorem provers, checkers programs.                                               |
+| 1960s–70s | Rule-based symbolic programs — ELIZA, SHRDLU.                                                          |
+| 1980s     | Expert systems — thousands of hand-written if-then rules encoding human expertise.                     |
+| 1990s     | Game-tree search — Deep Blue beating Kasparov (1997). Many researchers avoided the word "AI".          |
+| 2000s     | Statistical machine learning — spam filters, recommenders. Still sold as "machine learning", not "AI". |
+| 2010s     | Deep learning — image recognition (AlexNet, 2012), AlphaGo (2016).                                     |
+| 2020s     | Large language models — ChatGPT (2022) made "AI" mean chatbots.                                        |
 
-The pointer moves by a known mechanism, sometimes called the AI effect: once a technique works reliably, it gets renamed — it's "just" search, "just" statistics — and "AI" slides forward to the next unsolved thing. The observation is old. Bertram Raphael put it this way in 1971: "AI is a collective name for problems which we do not yet know how to solve properly by computer." Larry Tesler's version, from around 1979: "Intelligence is whatever machines haven't done yet."
+The pointer moves by a known mechanism, sometimes called the AI effect: once a technique works reliably, it gets renamed — it's "just" search, "just" statistics — and "AI" slides forward to the next unsolved thing. The observation is old. Larry Tesler, who dated his version to around 1970: "Intelligence is whatever machines haven't done yet." Bertram Raphael put it this way in 1971: "AI is a collective name for problems which we do not yet know how to solve properly by computer."
 
 This is why conversations about AI so often talk past each other. A claim like "AI can't reason" or "AI is overhyped" carries a hidden timestamp — it may be about expert systems, about 2010s image classifiers, or about last month's LLM, and each reference supports a different conclusion. When a discussion about AI stalls, the fix is usually to swap the word for whichever precise term is actually meant: the model, the [harness](#harness), the [agent](#agent), the [context](#context) it was given.
 
@@ -365,7 +365,7 @@ _Usage:_
 
 _AI coding · Agent systems · foundational · established_
 
-The [parameters](#parameters). [Stateless](#stateless) — does [next-token prediction](#next-token-prediction) and nothing else. "Claude Opus 4.x" and "GPT-5.x" are models. On its own a model can't do anything agentic; it has to be [harnessed](#harness).
+The [parameters](#parameters). [Stateless](#stateless) — does [next-token prediction](#next-token-prediction) and nothing else. A named release in a Claude, GPT, or Gemini model family is a model. On its own a model can't do anything agentic; it has to be [harnessed](#harness).
 
 Models can't read files, run commands, browse the web, or remember yesterday — it takes [tokens](#token) in and predicts tokens out, once per [model provider request](#model-provider-request). Everything that feels like an [agent](#agent) working — choosing [tools](#tool), reading results, looping until the task is done — is the harness orchestrating many of those predictions in a row.
 
@@ -375,7 +375,7 @@ Being strict about the word also sharpens diagnosis. "The model is bad at this" 
 
 _Usage:_
 
-"Should we switch the model from Sonnet to Opus for the planning step?"
+"Should we switch to the larger model for the planning step?"
 
 "Try it — but the harness is doing most of the lifting on this task. The model swap won't help if the [system prompt](#system-prompt) and tools are wrong."
 
@@ -403,7 +403,7 @@ The process that sets a [model](#model)'s [parameters](#parameters), by exposing
 
 The mechanism is repetition at scale: show the model a stretch of text, have it predict the next [token](#token), nudge the parameters toward whatever the actual next token was, and repeat across trillions of tokens. Nothing is stored as facts or rules — everything the model "knows" is a side effect of getting better at prediction, compressed into the parameters as [parametric knowledge](#parametric-knowledge).
 
-Two consequences matter day to day. Training ends at a point in time, so the model has a [knowledge cutoff](#knowledge-cutoff) — it hasn't seen the library version you upgraded to last month. And training is not something you can do: when the model doesn't know your codebase, your conventions, or your internal APIs, the fix is never "teach the model" — it's putting that material into [context](#context), the one input you control.
+Two consequences matter day to day. Training ends at a point in time, so the model has a [knowledge cutoff](#knowledge-cutoff) — it hasn't seen the library version you upgraded to last month. And training is rarely the lever you have. Some providers offer fine-tuning — further training on your own examples — but it is slow, it produces a separate model to maintain, and it goes stale as soon as the code changes. When the model doesn't know your codebase, your conventions, or your internal APIs, the practical fix is putting that material into [context](#context), the input you control on every request.
 
 _Usage:_
 
@@ -505,15 +505,15 @@ The same input can produce different output. Run a [model](#model) twice with id
 
 It's a property of how models generate text, and how [model providers](#model-provider) serve [requests](#model-provider-request). During [inference](#inference), the model produces a probability distribution over possible next [tokens](#token) and one is sampled from it — usually with some randomness on purpose, since always picking the most likely token produces repetitive, lower-quality text. One differently-sampled token early in a response changes every token after it, which is how a single different word becomes a completely different approach. Provider-side serving adds more variation on top: requests are batched together on shared hardware, and tiny floating-point differences between batches can tip a close call between two tokens. There's no setting you can flip to make it all go away.
 
-Expect a spread of results from an [agent](#agent) on the same task. Most responses fall within a reasonable bell curve of quality — that's why the non-determinism is tolerable at all — but the tails are real: some days the model will feel sharp; some days it'll feel like it's lost the plot. Same task, different rolls of the dice. This has two practical consequences. Retrying is a legitimate strategy: a failed attempt is one draw from the distribution, and a fresh attempt at the same task may simply land better. And verification matters more than it would with deterministic tools — you can't test an agent's behaviour once and rely on it repeating, so [automated checks](#automated-check) have to catch the bad draws.
+Expect a spread of results from an [agent](#agent) on the same task. Most responses fall within a reasonable bell curve of quality — that's why the non-determinism is tolerable at all — but the tails are real: some runs land well and some go badly on the same task. This has two practical consequences. Retrying is a legitimate strategy: a failed attempt is one draw from the distribution, and a fresh attempt at the same task may simply land better. And verification matters more than it would with deterministic tools — you can't test an agent's behaviour once and rely on it repeating, so [automated checks](#automated-check) have to catch the bad draws.
 
-Be careful not to over-narrativize this. Humans are pattern-matching machines, and a string of bad runs can feel like proof that "the model got worse this week." Usually it's just the distribution.
+A short streak of bad runs is weak evidence that the model changed. People read patterns into streaks, and a few bad draws in a row can feel like proof that "the model got worse this week." Usually it's just the distribution. Real regressions do happen — a provider can ship a serving bug or change a default — and an [eval](#eval) run repeatedly against a fixed configuration is how you tell the two apart.
 
 _Usage:_
 
 "Claude has been awful today. Did they ship a worse version?"
 
-"Probably not — model output is non-deterministic. You're going to have good days and bad days on the same task. Try again tomorrow before you go looking for a cause."
+"Probably not — model output is non-deterministic. You're going to have good days and bad days on the same task. Retry a few times before you go looking for a cause. If it persists, run the eval suite."
 
 ### Structured output
 
@@ -586,7 +586,7 @@ _Usage:_
 
 _AI coding · Agent systems · foundational · established_
 
-[Tokens](#token) the [harness](#harness) sends on each [model provider request](#model-provider-request) — the [system prompt](#system-prompt), the conversation history, [tool results](#tool-result), everything the [model](#model) reads before it writes. Billed at a lower rate than [output tokens](#output-tokens), because they are less expensive to process than output tokens.
+[Tokens](#token) the [harness](#harness) sends on each [model provider request](#model-provider-request) — the [system prompt](#system-prompt), the conversation history, [tool results](#tool-result), everything the [model](#model) reads before it writes. Billed at a lower rate than [output tokens](#output-tokens), because the provider processes input in parallel rather than one token at a time.
 
 When doing [AI](#ai) coding, input tokens make up most of your bill. The model is [stateless](#stateless), so each [turn](#turn) re-sends the entire [session](#session) as input: your first message, every response, every tool result since. The input for turn fifty contains the previous forty-nine turns. A single model provider request might produce a few hundred output tokens but re-send a hundred thousand input tokens of accumulated history.
 
@@ -606,11 +606,9 @@ _AI coding · Agent systems · foundational · established_
 
 [Tokens](#token) the [model](#model) generates back. Providers usually bill them at a higher rate than [input tokens](#input-tokens), since generation requires a sequential prediction for every token. The exact ratio varies by model and provider.
 
-Everything the model writes counts: the prose you read, the code it emits, [tool calls](#tool-call), and any extended thinking the model does before answering. That last one surprises people — reasoning tokens are billed as output even when the [harness](#harness) often doesn't show them to you, and turning up [effort](#effort) spends more of them.
+Everything the model writes counts: the prose you read, the code it emits, [tool calls](#tool-call), and any extended thinking the model does before answering. That last one surprises people — reasoning tokens are billed as output even when the [harness](#harness) doesn't show them to you, and turning up [effort](#effort) spends more of them. A short visible answer can carry a large output bill; the usage report shows it, the displayed text doesn't.
 
-Output tokens also set the pace of a [session](#session). The model reads input quickly but generates output one token at a time, so when a [turn](#turn) feels slow, it's almost always the output being written, not the input being read. A long wait usually means a long answer is coming.
-
-Reasoning models may spend output tokens before visible text starts. That creates latency and cost even when the final answer is short, which is why usage reports matter more than counting displayed words.
+Output tokens also set the pace of a [session](#session). The model reads input quickly but generates output one token at a time, so when a [turn](#turn) feels slow, the output being written is usually most of the wait. A very large uncached input still adds a delay before the first token, and a long pause before any text appears is often reasoning being generated.
 
 _Usage:_
 
@@ -626,7 +624,7 @@ The [provider](#model-provider)-side store that lets consecutive [model provider
 
 The cache pays off because sessions grow append-only. Every request re-sends the whole history as [input tokens](#input-tokens) (see that entry for why), and in a normal [session](#session) the history only changes at the end — each request is the previous one plus a few new messages. The provider processes the long shared beginning once, stores the result, and picks up from where the prefix ends. Without the cache, a 50-[turn](#turn) session would pay to re-process turn one fifty times.
 
-Caches also expire. How long an entry stays warm varies per model provider — typically minutes, not hours. Leave a session idle past the window and the next request rebuilds the prefix at full price once before caching resumes. This is mostly a [harness](#harness) builder's concern; as a user, the visible effect is that requests after a long pause cost more than the ones before it.
+Caches also expire. How long an entry stays warm depends on the model provider and the request settings — from a few minutes up to a day. Leave a session idle past the window and the next request rebuilds the prefix at full price once before caching resumes. Some providers also charge a premium to write a prefix into the cache, so a prefix that is written but rarely reused can cost more than no caching at all. This is mostly a [harness](#harness) builder's concern; as a user, the visible effect is that requests after a long pause cost more than the ones before it.
 
 _Usage:_
 
@@ -640,7 +638,7 @@ _AI coding · Agent systems · intermediate · established_
 
 [Input tokens](#input-tokens) the [provider](#model-provider) has cached from a previous [model provider request](#model-provider-request) so it doesn't have to re-process them. When consecutive requests share a prefix, the provider reuses the work via its [prefix cache](#prefix-cache) and bills the cached portion at a much lower rate. The lever that makes long [sessions](#session) affordable — without it, every [turn](#turn) re-pays for the whole history.
 
-The reason this matters is how sessions are billed. The [model](#model) is [stateless](#stateless), so every request resends the entire conversation — [system prompt](#system-prompt), every message, every [tool result](#tool-result) — as input tokens. By turn fifty, each request carries fifty turns of history, and you'd pay full rate on all of it, every time. The cache changes the maths: tokens the provider has already processed in an identical prefix are billed as cache tokens, often at a tenth of the input rate or less. On a long session, most of what you send is cache tokens, and the bill stays sane.
+The reason this matters is how sessions are billed. The [model](#model) is [stateless](#stateless), so every request resends the entire conversation — [system prompt](#system-prompt), every message, every [tool result](#tool-result) — as input tokens. By turn fifty, each request carries fifty turns of history, and you'd pay full rate on all of it, every time. The cache changes the maths: tokens the provider has already processed in an identical prefix are billed as cache tokens, often at a tenth of the input rate or less. Some providers bill the first write into the cache above the normal input rate, so the saving comes from reading the same prefix many times. On a long session, most of what you send is cache tokens, and the bill stays sane.
 
 An example shows when tokens are cached and when they're not. Each letter stands for a block of conversation content; each request sends the conversation so far:
 
@@ -651,7 +649,7 @@ An example shows when tokens are cached and when they're not. Each letter stands
 | `ABCD`        | `ABC`   | `D`                 | Prefix still intact                               |
 | `AXCD`        | `A`     | `XCD`               | An edit changed `B` to `X`; the match fails there |
 
-The cache is fragile in a specific way: it matches exact prefixes. If anything changes earlier in the conversation — the [harness](#harness) reorders content, a timestamp updates, a file's representation shifts — the cache misses from that point onward and everything after it is billed at full input rate. Caches also expire after a few minutes of inactivity, so a session resumed after a long pause re-pays its history once. When a session's cost jumps without an obvious cause, compare cache tokens to input tokens in the usage report — a broken cache shows up there first.
+The cache is fragile in a specific way: it matches exact prefixes. If anything changes earlier in the conversation — the [harness](#harness) reorders content, a timestamp updates, a file's representation shifts — the cache misses from that point onward and everything after it is billed at full input rate. Entries also expire after a period of inactivity, so a session resumed after a long pause re-pays its history once. When a session's cost jumps without an obvious cause, compare cache tokens to input tokens in the usage report — a broken cache shows up there first.
 
 _Usage:_
 
@@ -717,7 +715,7 @@ _Usage:_
 
 "Can I just paste the whole monorepo into the prompt?"
 
-"The context window's 200k tokens — that's maybe a fifth of the repo. Pick the files the task touches, leave the rest behind a tool call."
+"The context window holds a fraction of the repo, and everything in it is re-sent on every request. Pick the files the task touches, leave the rest behind a tool call."
 
 ### Context engineering
 
@@ -908,9 +906,9 @@ _AI coding · Agent systems · advanced · heuristic_
 
 When predicting each [token](#token), the [model](#model) factors in every other token in the [context](#context) — some heavily, others barely at all. The pairing between two tokens is an **attention relationship**, and meaningful pairs ("her" with "Sarah", or a `getUser()` call with its `function getUser` definition) influence each other more than unrelated ones. A context of N tokens has on the order of N² relationships.
 
-The pairings are where the model's apparent understanding lives. When it resolves a pronoun, it's because the attention relationship between "her" and "Sarah" is strong. When it calls a function with the right arguments, the relationship between the call site and the definition it read earlier is doing the work. None of this is looked up — it's computed fresh on every [model provider request](#model-provider-request), for every pair.
+The pairings are where the model's apparent understanding lives. When it resolves a pronoun, it's because the attention relationship between "her" and "Sarah" is strong. When it calls a function with the right arguments, the relationship between the call site and the definition it read earlier is doing the work. None of this is looked up — it's computed during each [model provider request](#model-provider-request). The [prefix cache](#prefix-cache) lets a request reuse the work already done for an unchanged prefix, but every new token is still paired against everything before it.
 
-The N² figure is worth sitting with, because it grows faster than intuition suggests:
+The number of pairings grows with the square of the context size:
 
 | Context size   | Pairings (~N²) |
 | -------------- | -------------- |
@@ -918,7 +916,7 @@ The N² figure is worth sitting with, because it grows faster than intuition sug
 | 10,000 tokens  | ~100 million   |
 | 100,000 tokens | ~10 billion    |
 
-Each pairing is also computed more than once. Models have multiple attention heads — exact counts for frontier models are unpublished, but fifty to a hundred is a reasonable guess — and each head computes its own version of every relationship. So every pairing in the table above is duplicated across every head. That's a lot of pairings.
+Each pairing is also computed more than once. A model is built from many layers, each with several attention heads, and every head in every layer computes its own version of each relationship. Exact counts for frontier models are unpublished; the table counts each pairing once.
 
 Only a small number of these relationships matter for any given task. The pairing between your instruction and the code it governs is one of a handful that count; almost everything else in the pool is noise. And the two grow at different rates: the relationships that matter stay roughly constant, while the total pool grows quadratically with context size. At 1,000 tokens, the pairing you care about is one in a million; at 100,000 tokens, it's one in ten billion. This is the arithmetic underneath the [attention budget](#attention-budget), and [attention degradation](#attention-degradation) is what it feels like when the relationships that matter get too thin a share.
 
@@ -934,11 +932,11 @@ _AI coding · Agent systems · intermediate · heuristic_
 
 Each [token](#token) has a finite amount of influence to distribute across the rest of the [context](#context). Heavy influence on [one relationship](#attention-relationship) leaves less for others. The budget is per-token and doesn't grow when the context does, which is why long [sessions](#session) dilute.
 
-Think of it as signal and noise. Your instruction is a signal at fixed volume; every other token in the [context window](#context-window) is competing sound. The instruction never gets quieter — it's still there, character for character — but as the context grows, the room gets louder around it, and the signal-to-noise ratio drops. An instruction that was the loudest thing at 10k tokens of context is background hum at 150k. This is the mechanism behind [attention degradation](#attention-degradation): the model doesn't forget; the signal gets lost in the noise.
+Think of it as signal and noise. Your instruction is a signal at fixed volume; every other token in the [context window](#context-window) is competing sound. The instruction never gets quieter — it's still there, character for character — but as the context grows, the room gets louder around it, and the signal-to-noise ratio drops. An instruction that was the loudest thing at 10k tokens of context is background hum at 150k. This is the working model behind [attention degradation](#attention-degradation): the model doesn't forget; the signal gets lost in the noise.
 
 The symptom reads as disobedience — the agent agreed to a constraint early on and then drifts from it, and re-pasting the constraint helps only briefly. The cause isn't the instruction; it's everything else in the window competing with it.
 
-What you can control is what goes into the context. Content that doesn't serve the task isn't neutral — it's noise over everything that does. Keep the window small, [clear](#clearing) when the accumulated context stops paying for itself, and restate the constraints that matter instead of trusting their early mention to hold.
+What you can control is what goes into the context. Content that doesn't serve the task isn't neutral — it's noise over everything that does. Keep the window small, and [clear](#clearing) when the accumulated context stops paying for itself. Restating a constraint right before the step it governs helps that step; it does not restore the constraint for the rest of a crowded session.
 
 _Usage:_
 
@@ -968,7 +966,7 @@ _Usage:_
 
 _AI coding · foundational · heuristic_
 
-Early in a [session](#session) the [agent](#agent) is in a "smart zone" — sharp, focused, recall is good. As the session grows it drifts into a "dumb zone": sloppier, forgetful, more mistakes — and more faithfulness [hallucinations](#hallucination). Same [model](#model), same [harness](#harness) — just more [context](#context). The felt effect of [attention degradation](#attention-degradation). On frontier models, the dumb zone commonly begins around 125K-150K [tokens](#token) — though this is debated. [Clear](#clearing) or [compact](#compaction) when the session bloats; don't push through.
+Early in a [session](#session) the [agent](#agent) is in a "smart zone" — sharp, focused, recall is good. As the session grows it drifts into a "dumb zone": sloppier, forgetful, more mistakes — and more faithfulness [hallucinations](#hallucination). Same [model](#model), same [harness](#harness) — just more [context](#context). The felt effect of [attention degradation](#attention-degradation). Where the dumb zone begins depends on the model and the task, and published figures disagree; treat any fixed [token](#token) count as a rule of thumb to check against your own sessions. [Clear](#clearing) or [compact](#compaction) when the session bloats; don't push through.
 
 The decline is gradual, which makes it easy to miss. There's no error message and no visible boundary; the agent just starts performing slightly worse, then noticeably worse. Common signs: it forgets an instruction you gave twenty turns ago, repeats a mistake it had already corrected, or confidently asserts something the context contradicts. Because the slide is smooth, the usual response is to push through and re-explain — which adds more context and makes the problem worse.
 
@@ -1024,9 +1022,9 @@ _AI coding · Agent systems · intermediate · established_
 
 [Compaction](#compaction) triggered automatically by the [harness](#harness) when the [context window](#context-window) approaches full.
 
-The harness watches how full the context window is. When it crosses a threshold — often around 80% — it pauses, asks the [model](#model) to summarise the [session](#session) so far, and seeds a fresh session with the summary. Work then continues as if nothing happened.
+The harness watches how full the context window is. When it crosses a threshold set by the harness, some distance before the window is full, it pauses, asks the [model](#model) to summarise the [session](#session) so far, and seeds a fresh session with the summary. Work then continues as if nothing happened.
 
-Except something did happen. Compaction is lossy, and autocompact is lossy at a moment you didn't choose. A manual compact happens at a phase boundary, when you can tell the model what to preserve. Autocompact fires mid-task, whenever the threshold is hit — possibly halfway through a refactor, with the summary deciding for itself which of your decisions were worth keeping. The classic symptom: the [agent](#agent) carries on confidently but has quietly forgotten a constraint you established an hour ago, and you only notice when its work starts contradicting it.
+Compaction is lossy, and autocompact is lossy at a moment you didn't choose. A manual compact happens at a phase boundary, when you can tell the model what to preserve. Autocompact fires mid-task, whenever the threshold is hit — possibly halfway through a refactor, with the summary deciding for itself which of your decisions were worth keeping. The classic symptom: the [agent](#agent) carries on confidently but has quietly forgotten a constraint you established an hour ago, and you only notice when its work starts contradicting it.
 
 The defence is to not let it fire. Watch the context indicator and compact manually at a natural boundary, or write decisions into a plan doc or [handoff artifact](#handoff-artifact) on disk, where no summary can lose them. Most harnesses also let you customise the buffer — moving the threshold earlier or later, or turning autocompact off entirely — so you can tune how much headroom you keep before it fires.
 
@@ -1262,7 +1260,7 @@ A tree of files and directories the [agent](#agent) reads from, writes to, and e
 
 The agent touches it only through [tool calls](#tool-call) — reading a file, writing one, running a shell command. Nothing on disk is in the [context window](#context-window) until a tool call loads it, which is what lets the agent work in a repository far larger than the window: the filesystem holds everything, the context holds only what the current task has read. Some harnesses do load the current directory's filenames into the context window by default — not the contents, just the tree — which act as [context pointers](#context-pointer): the agent sees what exists and reads the files it needs.
 
-And it's shared with you. The files the agent edits are the same ones you open in your editor and diff in git — the filesystem is the common workspace where you review what the agent did.
+You and the agent share the filesystem. The files the agent edits are the same ones you open in your editor and diff in git, so the filesystem is where you review what the agent did.
 
 _Usage:_
 
@@ -1700,7 +1698,7 @@ _Usage:_
 
 _AI coding · intermediate · project_
 
-Away from keyboard. A working pattern where the user kicks off a [session](#session) and leaves the [agent](#agent) to run unattended. The throughput multiplier of [AI](#ai) coding — many AFK sessions can run in parallel while you sleep, eat, or work on something else. Usually requires a permissive [permission mode](#permission-mode) plus [sandboxing](#sandbox) to be safe.
+Away from keyboard. A working pattern where the user kicks off a [session](#session) and leaves the [agent](#agent) to run unattended. It raises throughput in [AI](#ai) coding: several AFK sessions can run in parallel while you do something else. Usually requires a permissive [permission mode](#permission-mode) plus [sandboxing](#sandbox) to be safe.
 
 When you're not there, the agent handles ambiguity differently. While you're watching, an ambiguous decision surfaces as a question and you answer it; once you've walked away, the agent picks a default and keeps going, and every later decision builds on that guess. The characteristic failure is coming back to hours of finished, confident work built on a wrong call made in the first ten minutes. The work isn't sloppy — it's coherent, just coherent about the wrong thing.
 
@@ -1714,7 +1712,7 @@ _Usage:_
 
 "[Bypass permissions](#agent-mode)?"
 
-"Yeah, read-only [filesystem](#filesystem), no network."
+"Yeah, each in a fresh container — writes stay in its own [filesystem](#filesystem), no network."
 
 ### Vibe coding
 
@@ -1784,7 +1782,7 @@ Agents lower the cost of building, which is what makes this practical. A rough v
 
 You usually don't stop at one look. Iterate with the prototype — react, ask for a change, react again — so each round resolves another decision against the real artifact, at a higher fidelity than conversation allows.
 
-A prototype doesn't have to be all-scrappy. You can build the pieces you're actually evaluating to production quality, so when the decision lands, the component or API you reacted to can transfer into the real codebase. This makes prototyping essential material for the [spec](#spec) to reference.
+A prototype doesn't have to be all-scrappy. You can build the pieces you're actually evaluating to production quality, so when the decision lands, the component or API you reacted to can transfer into the real codebase. The [spec](#spec) can then reference the prototype directly instead of describing it.
 
 _Usage:_
 
@@ -2096,7 +2094,7 @@ Choosing a rung is a trade between safety and interruption, and both failure mod
 
 The loose end is most defensible inside a sandbox, where the blast radius of a bad [tool](#tool) call is contained. Outside one, most people settle on auto-approving reads and keeping a [human in the loop](#human-in-the-loop) for anything irreversible.
 
-Permission gating is one [guardrail](#guardrails) within a wider permission model. The model defines the rules and scopes; the mode selects a practical preset for a session.
+Permission gating is one [guardrail](#guardrails) within a wider permission policy. The policy defines the rules and scopes; the mode selects a practical preset for a session.
 
 _Usage:_
 

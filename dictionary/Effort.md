@@ -3,7 +3,6 @@ description: A dial for how much reasoning the model does before it answers. Mor
 aliases:
   - Reasoning effort
   - Thinking effort
-  - Extended thinking
 category: models-and-inference
 tracks:
   - coding
