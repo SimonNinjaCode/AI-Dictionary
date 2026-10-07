@@ -11,7 +11,7 @@ term_status: established
 level: foundational
 ---
 
-The [parameters](./Parameters.md). [Stateless](./Stateless.md) — does [next-token prediction](./Next-token%20prediction.md) and nothing else. "Claude Opus 4.x" and "GPT-5.x" are models. On its own a model can't do anything agentic; it has to be [harnessed](./Harness.md).
+The [parameters](./Parameters.md). [Stateless](./Stateless.md) — does [next-token prediction](./Next-token%20prediction.md) and nothing else. A named release in a Claude, GPT, or Gemini model family is a model. On its own a model can't do anything agentic; it has to be [harnessed](./Harness.md).
 
 Models can't read files, run commands, browse the web, or remember yesterday — it takes [tokens](./Token.md) in and predicts tokens out, once per [model provider request](./Model%20provider%20request.md). Everything that feels like an [agent](./Agent.md) working — choosing [tools](./Tool.md), reading results, looping until the task is done — is the harness orchestrating many of those predictions in a row.
 
@@ -21,6 +21,6 @@ Being strict about the word also sharpens diagnosis. "The model is bad at this" 
 
 _Usage:_
 
-"Should we switch the model from Sonnet to Opus for the planning step?"
+"Should we switch to the larger model for the planning step?"
 
 "Try it — but the harness is doing most of the lifting on this task. The model swap won't help if the [system prompt](./System%20prompt.md) and tools are wrong."

@@ -10,7 +10,7 @@ term_status: project
 level: intermediate
 ---
 
-Away from keyboard. A working pattern where the user kicks off a [session](./Session.md) and leaves the [agent](./Agent.md) to run unattended. The throughput multiplier of [AI](./AI.md) coding — many AFK sessions can run in parallel while you sleep, eat, or work on something else. Usually requires a permissive [permission mode](./Permission%20mode.md) plus [sandboxing](./Sandbox.md) to be safe.
+Away from keyboard. A working pattern where the user kicks off a [session](./Session.md) and leaves the [agent](./Agent.md) to run unattended. It raises throughput in [AI](./AI.md) coding: several AFK sessions can run in parallel while you do something else. Usually requires a permissive [permission mode](./Permission%20mode.md) plus [sandboxing](./Sandbox.md) to be safe.
 
 When you're not there, the agent handles ambiguity differently. While you're watching, an ambiguous decision surfaces as a question and you answer it; once you've walked away, the agent picks a default and keeps going, and every later decision builds on that guess. The characteristic failure is coming back to hours of finished, confident work built on a wrong call made in the first ten minutes. The work isn't sloppy — it's coherent, just coherent about the wrong thing.
 
@@ -24,4 +24,4 @@ _Usage:_
 
 "[Bypass permissions](./Agent%20mode.md)?"
 
-"Yeah, read-only [filesystem](./Filesystem.md), no network."
+"Yeah, each in a fresh container — writes stay in its own [filesystem](./Filesystem.md), no network."
