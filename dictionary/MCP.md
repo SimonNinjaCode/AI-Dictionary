@@ -16,6 +16,8 @@ The cost is paid in [context](./Context.md). Every tool a server advertises arri
 
 Many harnesses now mitigate this with tool search: instead of the full definitions, the context holds a [context pointer](./Context%20pointer.md) to the available tools — the agent searches for a tool by name or purpose and loads its definition only when it needs it. If your harness doesn't do this, the up-front cost still applies, and it's worth enabling only the servers a project actually needs.
 
+An MCP server is also a trust decision. Its tool descriptions are written by the server's author and land in the context window as text the model reads, and its tool results are content the model acts on — both are paths for [prompt injection](./Prompt%20injection.md). A local server runs as a process with your permissions; a remote one receives whatever the agent sends it. A server that reads untrusted content, or can send data out, supplies one leg of the [lethal trifecta](./Lethal%20trifecta.md) to every session it's enabled in. Install servers the way you would install a dependency: from sources you trust, with the narrowest credentials that work.
+
 _Usage:_
 
 "The agent needs to read tickets from Linear."

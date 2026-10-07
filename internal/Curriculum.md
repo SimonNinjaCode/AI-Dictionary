@@ -61,6 +61,7 @@
 - Agent framework
 - Agent SDK
 - Skill
+- Hook
 - Subagent
 
 ## Reasoning & orchestration
@@ -78,6 +79,7 @@
 - Handoff artifact
 - Spec
 - Ticket
+- Worktree
 - AGENTS.md
 - AFK
 - Vibe coding
@@ -100,11 +102,14 @@
 - Sycophancy
 - Hallucination
 - Prompt injection
+- Lethal trifecta
 - Guardrails
 - Permission request
 - Permission mode
 - Agent mode
 - Sandbox
+- Agent identity
+- Least privilege
 - Human-in-the-loop
 
 ## Runtime & protocols

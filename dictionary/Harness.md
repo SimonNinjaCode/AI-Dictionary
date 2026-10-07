@@ -8,7 +8,7 @@ term_status: established
 level: foundational
 ---
 
-Everything around the [model](./Model.md) that turns it into an [agent](./Agent.md): [tools](./Tool.md), [system prompt](./System%20prompt.md), [context-window management](./Context%20window.md), permissions, hooks. **Claude.ai** and **Claude Code** run on the same model but behave differently because their harnesses differ.
+Everything around the [model](./Model.md) that turns it into an [agent](./Agent.md): [tools](./Tool.md), [system prompt](./System%20prompt.md), [context-window management](./Context%20window.md), permissions, [hooks](./Hook.md). **Claude.ai** and **Claude Code** run on the same model but behave differently because their harnesses differ.
 
 The model itself only does one thing: take text in, produce text out. It can't read a file, run a command, or remember the last [turn](./Turn.md). The harness supplies all of that. It assembles the [context](./Context.md) for each [model provider request](./Model%20provider%20request.md), executes the [tool calls](./Tool%20call.md) the model asks for, feeds the [tool results](./Tool%20result.md) back in, stores the [session](./Session.md) history, asks you for permission before risky actions, and decides when to [compact](./Compaction.md). The [agent loop](./Agent%20loop.md) is run by the harness.
 

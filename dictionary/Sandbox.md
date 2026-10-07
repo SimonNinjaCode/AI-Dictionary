@@ -23,7 +23,7 @@ Isolation comes in grades:
 | Container        | Fresh filesystem, no credentials mounted, discarded after  | Anything the agent does to its own machine |
 | VM / cloud       | A separate machine entirely, often provided by the harness | Everything, including kernel-level escapes |
 
-What no sandbox contains: actions that leave it legitimately. An agent with your git credentials can push; one with network access can call production APIs, and a [prompt injection](./Prompt%20injection.md) in a file it reads can tell it to. Decide what crosses the boundary before deciding how thick to make it.
+What no sandbox contains: actions that leave it legitimately. An agent with your git credentials can push; one with network access can call production APIs, and a [prompt injection](./Prompt%20injection.md) in a file it reads can tell it to. Decide what crosses the boundary before deciding how thick to make it. Credentials are the main thing that crosses: an agent with its own [agent identity](./Agent%20identity.md), scoped by [least privilege](./Least%20privilege.md), carries less across than one using yours.
 
 _Usage:_
 

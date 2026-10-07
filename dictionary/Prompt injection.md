@@ -14,7 +14,7 @@ Prompt injection exploits an architectural ambiguity. Models receive instruction
 
 Coding agents are exposed because repositories contain text written by many people and because the agent may have filesystem, shell, network, or publishing tools. An injected instruction has little effect if the model can only summarize public text. It becomes more serious when the [permission mode](./Permission%20mode.md) lets generated decisions trigger external actions.
 
-Treat external content as data, restrict tools by default, isolate sensitive environments, validate important actions in code, and require approval where consequences are hard to reverse. [Guardrails](./Guardrails.md) can reduce exposure, but no prompt can guarantee that another prompt will never influence the model.
+Treat external content as data, restrict tools by default, isolate sensitive environments, validate important actions in code, and require approval where consequences are hard to reverse. [Guardrails](./Guardrails.md) can reduce exposure, but no prompt can guarantee that another prompt will never influence the model. How much damage an injection can do depends on what else the agent can reach; the [lethal trifecta](./Lethal%20trifecta.md) names the combination that turns it into data theft.
 
 Prompt injection differs from a jailbreak. Injection arrives through content the system processes, often without the user's knowledge. A jailbreak is a user deliberately trying to bypass the system's rules.
 
