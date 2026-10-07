@@ -10,7 +10,7 @@ level: foundational
 
 Deliberately selecting, ordering, and maintaining the [context](./Context.md) available to a [model](./Model.md) for a task. It includes what enters the context window, when it arrives, how it is represented, and when it is removed.
 
-Prompt writing changes one instruction. Context engineering manages the information system around that instruction. For a coding task, that may mean loading the interface before its call sites, giving the agent the failing test rather than the entire test suite, and pointing to repository instructions instead of pasting them into every turn. For an agent system, it may also include retrieval, memory, tool descriptions, conversation history, and summaries.
+Prompt writing changes one instruction. Context engineering manages the information system around that instruction. For a coding task, that may mean loading the interface before its call sites, giving the agent the failing test rather than the entire test suite, and pointing to repository instructions instead of pasting them into every turn. For an agent system, it may also include retrieval, memory, tool descriptions from built-in tools and [MCP](./MCP.md) servers, conversation history, and summaries.
 
 More context is not automatically better. Irrelevant files consume [tokens](./Token.md), increase cost, and compete with the facts that matter. Missing context causes the opposite failure: the agent guesses at an API, violates a decision it never saw, or repeats work already completed. The job is to keep the smallest useful set available and make omitted material discoverable through [context pointers](./Context%20pointer.md) or tools.
 

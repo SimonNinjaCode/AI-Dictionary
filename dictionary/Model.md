@@ -15,7 +15,7 @@ The [parameters](./Parameters.md). [Stateless](./Stateless.md) — does [next-to
 
 Models can't read files, run commands, browse the web, or remember yesterday — it takes [tokens](./Token.md) in and predicts tokens out, once per [model provider request](./Model%20provider%20request.md). Everything that feels like an [agent](./Agent.md) working — choosing [tools](./Tool.md), reading results, looping until the task is done — is the harness orchestrating many of those predictions in a row.
 
-[Model providers](./Model%20provider.md) ship models in tiers: a large one that's smartest but slow and expensive, and smaller ones that are faster and cheaper but less capable. Picking a tier is a real decision — heavyweight for planning and hard debugging, lightweight for mechanical changes — and harnesses let you switch mid-[session](./Session.md).
+[Model providers](./Model%20provider.md) ship models in tiers: a large one that's smartest but slow and expensive, and smaller ones that are faster and cheaper but less capable. Picking a tier is a real decision — heavyweight for planning and hard debugging, lightweight for mechanical changes — and harnesses let you switch mid-[session](./Session.md). Within a tier, [effort](./Effort.md) sets how long the model reasons before it answers.
 
 Being strict about the word also sharpens diagnosis. "The model is bad at this" is a specific claim — the same model in a different harness, or with a different [context](./Context.md), often behaves completely differently. Before blaming the model, check what it was given: most disappointing output traces back to context or harness, not parameters.
 

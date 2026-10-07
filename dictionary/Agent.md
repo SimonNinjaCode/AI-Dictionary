@@ -12,9 +12,7 @@ A [model](./Model.md) [harnessed](./Harness.md) with [tools](./Tool.md), a [syst
 
 Unlike most terms in this dictionary, "agent" doesn't name a mechanical part. The model is a file of [parameters](./Parameters.md); the harness is software you can point at. The agent is neither — it's the unit you're speaking to. People anthropomorphize [AI](./AI.md) constantly, and the agent is the anthropomorphized unit: the thing you delegate to, the thing that reads your message and answers, the "it" in "it broke the build again". When you say the agent did something, you mean the model-plus-harness did it, but you're addressing the combination as a single actor.
 
-The idea is older than this wave of AI. Software agents — programs you delegate a goal to, which act on your behalf — have been a concept for as long as AI has.
-
-[Agentic AI](./Agentic%20AI.md) is the broader, looser label for systems built around this pattern. [Autonomy](./Autonomy.md) describes how far an agent may act without approval, not whether it qualifies as an agent.
+The idea is older than this wave of AI. Software agents — programs you delegate a goal to, which act on your behalf — have been a concept for as long as AI has. [Agentic AI](./Agentic%20AI.md) is today's looser label for systems built around the pattern. How far an agent may act without approval is its [autonomy](./Autonomy.md); that varies between agents but doesn't decide whether something is one.
 
 _Avoid:_ "the AI", "the bot" (too vague — they hide whether you mean the parameters or the harnessed thing).
 

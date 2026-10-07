@@ -14,7 +14,7 @@ The model itself only does one thing: take text in, produce text out. It can't r
 
 This matters for diagnosis. When behaviour differs between two products, or between yesterday and today, the model is often not the variable — the harness is. A different system prompt, a different set of tools, a changed permission default, or a new context-management strategy all change behaviour without any change to the model. It also means the harness is where most of your configuration lives: [AGENTS.md](./AGENTS.md.md) files, permission settings, and hooks are all instructions to the harness, not the model.
 
-Examples: Claude Code, Cursor, Codex CLI — and Claude.ai, which is a chat harness rather than a coding one.
+Examples: Claude Code, Cursor, Codex CLI — and Claude.ai, which is a chat harness rather than a coding one. When you build your own agent, an [agent framework](./Agent%20framework.md) or [Agent SDK](./Agent%20SDK.md) supplies much of the harness.
 
 _Usage:_
 
