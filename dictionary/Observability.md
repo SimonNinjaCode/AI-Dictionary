@@ -8,7 +8,7 @@ term_status: established
 level: intermediate
 ---
 
-The records and tools used to reconstruct, measure, and debug how an agent behaved during a run. Useful records include model requests, tool calls, tool results, state transitions, timing, token usage, errors, retries, permissions, and the configuration that produced them.
+The records and tools used to reconstruct, measure, and debug how an [agent](./Agent.md) behaved during a run. Useful records include [model provider requests](./Model%20provider%20request.md), [tool calls](./Tool%20call.md), [tool results](./Tool%20result.md), state transitions, timing, token usage, errors, retries, permissions, and the configuration that produced them.
 
 Ordinary application logs often show that a request failed. Agent observability must show the path that led there. A wrong file edit may begin with poor retrieval, continue through a plausible but incorrect plan, survive a weak review, and only appear as a failed deployment much later. Without the intermediate events, the final error hides the decision that needs fixing.
 

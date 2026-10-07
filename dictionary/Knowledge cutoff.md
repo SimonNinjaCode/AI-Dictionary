@@ -12,9 +12,7 @@ The date past which a [model](./Model.md) has no [parametric knowledge](./Parame
 
 The cutoff exists because of how models are made: [training](./Training.md) bakes a snapshot of text into the model's [parameters](./Parameters.md), and after that the parameters are frozen. The model doesn't know its knowledge has an edge — asked about something past the cutoff, it doesn't refuse, it extrapolates from the nearest thing it does know. That's what makes the trap quiet: code written against an old version of a library looks plausible, often compiles, and fails on the parts that changed.
 
-The fix is always the same: get current information into [context](./Context.md). Load the changelog, point at the installed version's type definitions, or have the agent read the docs from the web. Anything in context outranks nothing-in-parameters.
-
-A cutoff is not a guarantee that everything before that date was learned correctly. Important facts still need verification against a current primary source.
+The fix is always the same: get current information into [context](./Context.md). Load the changelog, point at the installed version's type definitions, or have the agent read the docs from the web. Anything in context outranks nothing-in-parameters. The same check applies before the cutoff: a fact the model saw rarely in training can still be wrong, so verify what matters against a [primary source](./Primary%20source.md).
 
 _Usage:_
 

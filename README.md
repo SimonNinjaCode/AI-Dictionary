@@ -369,7 +369,7 @@ The [parameters](#parameters). [Stateless](#stateless) — does [next-token pred
 
 Models can't read files, run commands, browse the web, or remember yesterday — it takes [tokens](#token) in and predicts tokens out, once per [model provider request](#model-provider-request). Everything that feels like an [agent](#agent) working — choosing [tools](#tool), reading results, looping until the task is done — is the harness orchestrating many of those predictions in a row.
 
-[Model providers](#model-provider) ship models in tiers: a large one that's smartest but slow and expensive, and smaller ones that are faster and cheaper but less capable. Picking a tier is a real decision — heavyweight for planning and hard debugging, lightweight for mechanical changes — and harnesses let you switch mid-[session](#session).
+[Model providers](#model-provider) ship models in tiers: a large one that's smartest but slow and expensive, and smaller ones that are faster and cheaper but less capable. Picking a tier is a real decision — heavyweight for planning and hard debugging, lightweight for mechanical changes — and harnesses let you switch mid-[session](#session). Within a tier, [effort](#effort) sets how long the model reasons before it answers.
 
 Being strict about the word also sharpens diagnosis. "The model is bad at this" is a specific claim — the same model in a different harness, or with a different [context](#context), often behaves completely differently. Before blaming the model, check what it was given: most disappointing output traces back to context or harness, not parameters.
 
@@ -588,11 +588,9 @@ _AI coding · Agent systems · foundational · established_
 
 [Tokens](#token) the [harness](#harness) sends on each [model provider request](#model-provider-request) — the [system prompt](#system-prompt), the conversation history, [tool results](#tool-result), everything the [model](#model) reads before it writes. Billed at a lower rate than [output tokens](#output-tokens), because the provider processes input in parallel rather than one token at a time.
 
-When doing [AI](#ai) coding, input tokens make up most of your bill. The model is [stateless](#stateless), so each [turn](#turn) re-sends the entire [session](#session) as input: your first message, every response, every tool result since. The input for turn fifty contains the previous forty-nine turns. A single model provider request might produce a few hundred output tokens but re-send a hundred thousand input tokens of accumulated history.
+When doing [AI](#ai) coding, input tokens make up most of your bill. The model is [stateless](#stateless), so each [turn](#turn) re-sends the entire [session](#session) as input: your first message, every response, every tool result since. The input for turn fifty contains the previous forty-nine turns, plus the tool definitions and [AGENTS.md](#agentsmd) content loaded at session start, whether or not the task uses them. A single model provider request might produce a few hundred output tokens but re-send a hundred thousand input tokens of accumulated history.
 
-The [prefix cache](#prefix-cache) reduces the cost: history that exactly matches a previous request is billed as cheap [cache tokens](#cache-tokens) rather than full-price input. When input costs still hurt, the fix is to shrink what gets re-sent — [clearing](#clearing) or [compacting](#compaction) between tasks.
-
-Tool definitions and standing repository instructions count too, even when the agent never uses them during the task. [Context engineering](#context-engineering) therefore affects cost before the first file is read.
+The [prefix cache](#prefix-cache) reduces the cost: history that exactly matches a previous request is billed as cheap [cache tokens](#cache-tokens) rather than full-price input. When input costs still hurt, the fix is to shrink what gets re-sent — [clearing](#clearing) or [compacting](#compaction) between tasks, and the [context engineering](#context-engineering) that decides what gets loaded at all.
 
 _Usage:_
 
@@ -707,7 +705,7 @@ Everything the [model](#model) sees on each [model provider request](#model-prov
 
 It's a single sequence of [tokens](#token): the [system prompt](#system-prompt), the conversation so far, every [tool result](#tool-result) the [harness](#harness) has fed back in. If something is in that sequence, the model can use it; if it isn't, the model doesn't know it exists — not your codebase, not the file you edited yesterday, not the instruction you gave three sessions ago. Anything outside the window has to be brought in, usually via a [tool call](#tool-call), before it can affect anything.
 
-Finite means it fills up. Every turn appends more — your messages, the model's responses, tool results — and a long [session](#session) will eventually hit the limit, forcing [compaction](#compaction) or [clearing](#clearing). It also means everything in the window competes: each token you load is one less available for the rest, and content you didn't need still occupies the model's [attention](#attention-budget). The practical stance is to treat the window as a budget — load what the task needs, leave the rest out.
+Finite means it fills up. Every turn appends more — your messages, the model's responses, tool results — and a long [session](#session) will eventually hit the limit, forcing [compaction](#compaction) — often as [autocompact](#autocompact) — or [clearing](#clearing). It also means everything in the window competes: each token you load is one less available for the rest, and content you didn't need still occupies the model's [attention](#attention-budget). The practical stance is to treat the window as a budget — load what the task needs, leave the rest out.
 
 _Avoid:_ "memory" — the context window is working state and doesn't persist across sessions. [Memory](#memory-system) is a separate concept layered on top.
 
@@ -723,7 +721,7 @@ _AI coding · Agent systems · foundational · established_
 
 Deliberately selecting, ordering, and maintaining the [context](#context) available to a [model](#model) for a task. It includes what enters the context window, when it arrives, how it is represented, and when it is removed.
 
-Prompt writing changes one instruction. Context engineering manages the information system around that instruction. For a coding task, that may mean loading the interface before its call sites, giving the agent the failing test rather than the entire test suite, and pointing to repository instructions instead of pasting them into every turn. For an agent system, it may also include retrieval, memory, tool descriptions, conversation history, and summaries.
+Prompt writing changes one instruction. Context engineering manages the information system around that instruction. For a coding task, that may mean loading the interface before its call sites, giving the agent the failing test rather than the entire test suite, and pointing to repository instructions instead of pasting them into every turn. For an agent system, it may also include retrieval, memory, tool descriptions from built-in tools and [MCP](#mcp) servers, conversation history, and summaries.
 
 More context is not automatically better. Irrelevant files consume [tokens](#token), increase cost, and compete with the facts that matter. Missing context causes the opposite failure: the agent guesses at an API, violates a decision it never saw, or repeats work already completed. The job is to keep the smallest useful set available and make omitted material discoverable through [context pointers](#context-pointer) or tools.
 
@@ -806,9 +804,7 @@ The date past which a [model](#model) has no [parametric knowledge](#parametric-
 
 The cutoff exists because of how models are made: [training](#training) bakes a snapshot of text into the model's [parameters](#parameters), and after that the parameters are frozen. The model doesn't know its knowledge has an edge — asked about something past the cutoff, it doesn't refuse, it extrapolates from the nearest thing it does know. That's what makes the trap quiet: code written against an old version of a library looks plausible, often compiles, and fails on the parts that changed.
 
-The fix is always the same: get current information into [context](#context). Load the changelog, point at the installed version's type definitions, or have the agent read the docs from the web. Anything in context outranks nothing-in-parameters.
-
-A cutoff is not a guarantee that everything before that date was learned correctly. Important facts still need verification against a current primary source.
+The fix is always the same: get current information into [context](#context). Load the changelog, point at the installed version's type definitions, or have the agent read the docs from the web. Anything in context outranks nothing-in-parameters. The same check applies before the cutoff: a fact the model saw rarely in training can still be wrong, so verify what matters against a [primary source](#primary-source).
 
 _Usage:_
 
@@ -1098,9 +1094,7 @@ A [model](#model) [harnessed](#harness) with [tools](#tool), a [system prompt](#
 
 Unlike most terms in this dictionary, "agent" doesn't name a mechanical part. The model is a file of [parameters](#parameters); the harness is software you can point at. The agent is neither — it's the unit you're speaking to. People anthropomorphize [AI](#ai) constantly, and the agent is the anthropomorphized unit: the thing you delegate to, the thing that reads your message and answers, the "it" in "it broke the build again". When you say the agent did something, you mean the model-plus-harness did it, but you're addressing the combination as a single actor.
 
-The idea is older than this wave of AI. Software agents — programs you delegate a goal to, which act on your behalf — have been a concept for as long as AI has.
-
-[Agentic AI](#agentic-ai) is the broader, looser label for systems built around this pattern. [Autonomy](#autonomy) describes how far an agent may act without approval, not whether it qualifies as an agent.
+The idea is older than this wave of AI. Software agents — programs you delegate a goal to, which act on your behalf — have been a concept for as long as AI has. [Agentic AI](#agentic-ai) is today's looser label for systems built around the pattern. How far an agent may act without approval is its [autonomy](#autonomy); that varies between agents but doesn't decide whether something is one.
 
 _Avoid:_ "the AI", "the bot" (too vague — they hide whether you mean the parameters or the harnessed thing).
 
@@ -1114,13 +1108,13 @@ _Usage:_
 
 _AI coding · Agent systems · foundational · emerging_
 
-A loose label for systems that pursue a goal through multiple actions rather than producing one answer. An agentic system usually combines a [model](#model), a [harness](#harness), tools, working state, and an [agent loop](#agent-loop) that continues until the task ends or a limit stops it.
+A loose label for systems that pursue a goal through multiple actions rather than producing one answer. An agentic system usually combines a [model](#model), a [harness](#harness), [tools](#tool), working state, and an [agent loop](#agent-loop) that continues until the task ends or a limit stops it.
 
 The term describes a degree, not a clean product category. A chat assistant that only returns prose is weakly agentic or not agentic at all. A coding agent that searches files, edits code, runs tests, reads failures, and tries again has more of the relevant behavior. A system that also chooses subgoals, delegates work, and operates without immediate approval has more [autonomy](#autonomy), but autonomy and agentic behavior are not identical.
 
-Vendors use "agentic AI" broadly because it sounds more capable than "workflow with model calls". The label can hide the parts that determine actual behavior. Ask which tools exist, who chooses the next step, where state lives, what permissions apply, and what ends the run. Those answers are concrete enough to design and review.
+Vendors use "agentic AI" broadly because it sounds more capable than "[workflow](#workflow) with model calls". The label can hide the parts that determine actual behavior. Ask which tools exist, who chooses the next step, where state lives, what permissions apply, and what ends the run. Those answers are concrete enough to design and review.
 
-The distinction matters when estimating risk. Adding a tool does not merely improve an answer. It creates a path from generated text to an external effect. Repeating the loop lets one bad assumption influence several later actions. Permissions, [guardrails](#guardrails), evaluation, and human checkpoints become part of the system rather than optional polish.
+The distinction matters when estimating risk. Adding a tool does not merely improve an answer. It creates a path from generated text to an external effect. Repeating the loop lets one bad assumption influence several later actions. Permissions, [guardrails](#guardrails), [evaluation](#eval), and human checkpoints become part of the system rather than optional polish.
 
 _Avoid:_ using "agentic" as a synonym for advanced, intelligent, or autonomous. Name the behavior that matters.
 
@@ -1160,7 +1154,7 @@ The model itself only does one thing: take text in, produce text out. It can't r
 
 This matters for diagnosis. When behaviour differs between two products, or between yesterday and today, the model is often not the variable — the harness is. A different system prompt, a different set of tools, a changed permission default, or a new context-management strategy all change behaviour without any change to the model. It also means the harness is where most of your configuration lives: [AGENTS.md](#agentsmd) files, permission settings, and hooks are all instructions to the harness, not the model.
 
-Examples: Claude Code, Cursor, Codex CLI — and Claude.ai, which is a chat harness rather than a coding one.
+Examples: Claude Code, Cursor, Codex CLI — and Claude.ai, which is a chat harness rather than a coding one. When you build your own agent, an [agent framework](#agent-framework) or [Agent SDK](#agent-sdk) supplies much of the harness.
 
 _Usage:_
 
@@ -1174,19 +1168,19 @@ _AI coding · Agent systems · foundational · established_
 
 The repeated cycle where a [model](#model) chooses an action, receives its result, and decides what to do next. The [harness](#harness) runs the cycle. The model only produces the next output for the context it receives.
 
-| Step | Actor   | What happens                                                          |
-| ---- | ------- | --------------------------------------------------------------------- |
-| 1    | Harness | Builds the current context and sends a model provider request         |
-| 2    | Model   | Returns text, a [tool call](#tool-call), or a completion signal |
-| 3    | Harness | Checks permissions and executes the requested action                  |
-| 4    | Tool    | Returns a [tool result](#tool-result)                           |
-| 5    | Harness | Adds the result to context and calls the model again                  |
+| Step | Actor   | What happens                                                                                     |
+| ---- | ------- | ------------------------------------------------------------------------------------------------ |
+| 1    | Harness | Builds the current context and sends a [model provider request](#model-provider-request) |
+| 2    | Model   | Returns text, a [tool call](#tool-call), or a completion signal                            |
+| 3    | Harness | Checks permissions and executes the requested action                                             |
+| 4    | Tool    | Returns a [tool result](#tool-result)                                                      |
+| 5    | Harness | Adds the result to context and calls the model again                                             |
 
 One user [turn](#turn) may contain dozens of loop iterations. Reading a file, searching for a symbol, editing code, running a test, and fixing the failure are separate requests even though the interface presents them as one continuous piece of work.
 
-The loop explains both capability and cost. Tools let the agent observe the environment and correct itself. Each iteration also adds context, spends tokens, introduces latency, and creates another chance to choose a poor action. A loop without a clear stop condition can repeat the same failed approach or consume a budget long after useful progress ended.
+The loop explains both capability and cost. Tools let the agent observe the environment and correct itself. Each iteration also adds context, spends [tokens](#token), introduces latency, and creates another chance to choose a poor action. A loop without a clear stop condition can repeat the same failed approach or consume a budget long after useful progress ended.
 
-Good harnesses stop on completion, user interruption, permission denial, budget exhaustion, repeated failure, or a configured iteration limit. Durable systems also record enough state to resume safely after interruption.
+Good harnesses stop on completion, user interruption, permission denial, budget exhaustion, repeated failure, or a configured iteration limit. Systems built for [durable execution](#durable-execution) also record enough state to resume safely after interruption. The iteration count per run is one of the first numbers worth tracking in [observability](#observability).
 
 _Avoid:_ calling the agent loop "the model thinking". The loop is orchestration around repeated model requests and external actions.
 
@@ -1285,9 +1279,7 @@ Tools most coding agents ship with:
 
 A tool is defined by three things: a name, a description of what it does, and a schema for its parameters. The harness sends these definitions to the [model](#model) with every request, and the model chooses a tool the same way it produces everything else — by writing [tokens](#token), in this case a structured call with arguments. The model never executes anything itself; the harness reads the call, runs the function, and sends back the result.
 
-The tool list sets what the agent can do. A capable model with a narrow tool set is a narrow agent: it will route everything through whatever it has, which is why agents lean so heavily on Bash — a shell is one tool that reaches most of the system. To give an agent a capability cleanly, add a tool for it; [MCP](#mcp) is the standard for plugging in tools from outside the harness.
-
-[Computer use](#computer-use) is a broad visual tool for software that has no suitable API. Prefer a purpose-built tool when one exists because its operations and results are easier to validate.
+The tool list sets what the agent can do. A capable model with a narrow tool set is a narrow agent: it will route everything through whatever it has, which is why agents lean so heavily on Bash — a shell is one tool that reaches most of the system. [Computer use](#computer-use) reaches further, to software with no API, at the cost of slower actions and results that are harder to validate. To give an agent a capability cleanly, add a purpose-built tool for it; [MCP](#mcp) is the standard for plugging in tools from outside the harness.
 
 Tool definitions occupy [context](#context) on every request, so a large tool set has a standing cost before any tool is called — and many similarly-described tools make the model worse at picking the right one.
 
@@ -1479,9 +1471,9 @@ _Usage:_
 
 _AI coding · Agent systems · foundational · established_
 
-A predefined sequence of steps where code controls what runs next, even when individual steps call a [model](#model). The path may contain branches and retries, but those transitions are designed in advance rather than chosen freely by an [agent](#agent).
+A predefined sequence of steps where code controls what runs next, even when individual steps call a [model](#model). The path may contain branches and retries, but those transitions are designed in advance rather than chosen freely by an [agent](#agent). A [state graph](#state-graph) is one way to make them explicit.
 
-The distinction is about control, not whether AI appears anywhere. A pipeline that classifies an issue, selects one of three prompts, generates a patch, runs tests, and requests review is a workflow if code owns the sequence. A coding agent given "fix this issue" chooses its searches, edits, and tests through an [agent loop](#agent-loop). Both may use the same model and tools.
+The distinction is about control, not whether AI appears anywhere. A pipeline that classifies an issue, selects one of three prompts, generates a patch, runs tests, and requests review is a workflow if code owns the sequence. A coding agent given "fix this issue" chooses its searches, edits, and tests through an [agent loop](#agent-loop). Both may use the same model and [tools](#tool).
 
 Workflows are easier to predict, test, price, and audit because the allowed paths are visible. They work well when the process is understood and exceptions can be enumerated. Agents fit tasks where the necessary steps depend on observations that are difficult to encode in advance. Many useful systems combine them: a workflow controls the high-level phases while an agent handles an open-ended step inside one phase.
 
@@ -1648,7 +1640,7 @@ A [handoff artifact](#handoff-artifact) describing a multi-[session](#session) p
 
 The spec exists because sessions are disposable and big work isn't. Anything that takes more than one [context window](#context-window) of effort needs a home outside the [context](#context) — somewhere in the agent's [environment](#environment) that survives [clearing](#clearing), whether that's a file in the repo, a GitHub issue, or an issue tracker the agent can reach. The spec is that home: the goal, the constraints, the decisions made so far, and the list of tickets with their status. Any fresh session can read it and know where the work stands without inheriting the previous session's accumulated noise.
 
-Specs come in recognisable styles, mostly inherited from how teams already write things down. A _product requirements document_ (PRD) leans toward the user-facing what and why — features, behaviour, acceptance criteria. A _design doc_ or _RFC_ leans technical — the chosen approach, the alternatives rejected, the trade-offs. At the small end, a plain `plan.md` with a checklist of tickets does the same job for a multi-session feature. The style matters less than the role: for the [agent](#agent), each of these is the same thing — the durable statement of intent it reads at the start of every session.
+Specs come in recognisable styles, mostly inherited from how teams already write things down. A _product requirements document_ (PRD) leans toward the user-facing what and why — features, behaviour, acceptance criteria. A _design doc_ or _RFC_ leans technical — the chosen approach, the alternatives rejected, the trade-offs. At the small end, a plain `plan.md` with a checklist of tickets does the same job for a multi-session feature. The style matters less than the role: for the [agent](#agent), each of these is the same thing — the durable statement of intent it reads at the start of every session. A spec records a [design concept](#design-concept); it can't stand in for one that isn't settled yet.
 
 _Usage:_
 
@@ -1702,7 +1694,7 @@ Away from keyboard. A working pattern where the user kicks off a [session](#sess
 
 When you're not there, the agent handles ambiguity differently. While you're watching, an ambiguous decision surfaces as a question and you answer it; once you've walked away, the agent picks a default and keeps going, and every later decision builds on that guess. The characteristic failure is coming back to hours of finished, confident work built on a wrong call made in the first ten minutes. The work isn't sloppy — it's coherent, just coherent about the wrong thing.
 
-Since you can't give input during the run, give it before and after instead. Before: resolve the ambiguity up front — a [grilling](#grilling) session, a written [spec](#spec) — so there are fewer gaps for the agent to fill alone. During: [automated checks](#automated-check) and [automated review](#automated-review) stand in for the attention you're not giving, failing fast on what can be caught mechanically. After: the run ends in something reviewable — a PR, not changes already merged. AFK doesn't remove [human review](#human-review); it defers all of it to the end, which is why what arrives at the end has to be worth reviewing. This is also why [AX](#ax) matters most in AFK runs — with no one watching, the environment is the only support the agent gets.
+Since you can't give input during the run, give it before and after instead. Before: resolve the ambiguity up front — a [grilling](#grilling) session, a written [spec](#spec) — so there are fewer gaps for the agent to fill alone. During: [automated checks](#automated-check) and [automated review](#automated-review) stand in for the attention you're not giving, failing fast on what can be caught mechanically. After: the run ends in something reviewable — a PR, not changes already merged. AFK doesn't remove [human review](#human-review); it defers all of it to the end, which is why what arrives at the end has to be worth reviewing. Skipping that review turns AFK into [vibe coding](#vibe-coding). This is also why [AX](#ax) matters most in AFK runs — with no one watching, the environment is the only support the agent gets.
 
 _Avoid:_ "background agent" — centers the machine ("running in the background") rather than the human pattern ("user has walked away"). AFK names the fact that matters: the user isn't watching.
 
@@ -1758,7 +1750,7 @@ _AI coding · intermediate · project_
 
 A technique for developing a [design concept](#design-concept) with an [agent](#agent): the agent interviews the user Socratically, one decision at a time, proposing a recommended answer for each. Slows the rush to a finished plan — no [handoff artifact](#handoff-artifact) is written until the concept stabilises.
 
-The technique exists because agents fill gaps silently. Asked to write a [spec](#spec) from a two-line prompt, the agent doesn't stop at the decisions you haven't made — it picks defaults and writes them in. The result looks complete, and the guesses are indistinguishable from the choices, so you discover them late: at review, or when the built feature handles an edge case in a way you never chose. Grilling inverts this — instead of guessing, the agent has to ask.
+The technique exists because agents fill gaps silently. Asked to write a [spec](#spec) from a two-line prompt, the agent doesn't stop at the decisions you haven't made — it picks defaults and writes them in. The result looks complete, and the guesses are indistinguishable from the choices, so you discover them late: at review, or when the built feature handles an edge case in a way you never chose. Grilling inverts this — instead of guessing, the agent has to ask. Watch for [sycophancy](#sycophancy) in its recommendations: an agent that drops its recommended answer the moment you hesitate isn't giving you a second opinion.
 
 It's a [human-in-the-loop](#human-in-the-loop) technique: your answers are the input. When a question can't be answered in conversation — you'd have to see the thing — switch to [prototyping](#prototyping).
 
@@ -1924,7 +1916,7 @@ _Usage:_
 
 _AI coding · Agent systems · intermediate · established_
 
-The records and tools used to reconstruct, measure, and debug how an agent behaved during a run. Useful records include model requests, tool calls, tool results, state transitions, timing, token usage, errors, retries, permissions, and the configuration that produced them.
+The records and tools used to reconstruct, measure, and debug how an [agent](#agent) behaved during a run. Useful records include [model provider requests](#model-provider-request), [tool calls](#tool-call), [tool results](#tool-result), state transitions, timing, token usage, errors, retries, permissions, and the configuration that produced them.
 
 Ordinary application logs often show that a request failed. Agent observability must show the path that led there. A wrong file edit may begin with poor retrieval, continue through a plausible but incorrect plan, survive a weak review, and only appear as a failed deployment much later. Without the intermediate events, the final error hides the decision that needs fixing.
 
@@ -1982,9 +1974,7 @@ Confidently-wrong [model](#model) output. Two flavors with different causes and 
 
 [Next-token prediction](#next-token-prediction) produces fluent output whether or not the underlying fact is real — the model has no internal signal that it doesn't know something, so an invented method arrives in the same assured register as a correct one. Hallucinated code is plausible by construction: it's what the API _would_ look like if it existed, which is exactly what makes it slip past a skim-level review and fail only when run.
 
-You need to know which flavor you're looking at, because the fix for one makes the other worse. Factuality means missing knowledge: the fix is adding context — the docs, the type definitions, the file. Faithfulness means the knowledge is present but losing the competition for attention: the fix is removing context. Misdiagnose faithfulness as factuality and you paste in more docs, which grows the context and makes the drift worse. When the agent gets something wrong, check whether the correct information was already in context before deciding which problem you have.
-
-[RAG](#rag) can supply current source material for factual gaps. It does not prevent the model from retrieving the wrong source or misreading the right one.
+You need to know which flavor you're looking at, because the fix for one makes the other worse. Factuality means missing knowledge: the fix is adding context — the docs, the type definitions, the file, or a [RAG](#rag) step that retrieves them, which helps only if it retrieves the right source. Faithfulness means the knowledge is present but losing the competition for attention: the fix is removing context. Misdiagnose faithfulness as factuality and you paste in more docs, which grows the context and makes the drift worse. When the agent gets something wrong, check whether the correct information was already in context before deciding which problem you have.
 
 _Avoid:_ "hallucination" as a bare synonym for "wrong" — without naming the flavor, the term has no diagnostic value.
 
@@ -2026,7 +2016,7 @@ _AI coding · Agent systems · foundational · established_
 
 Controls that constrain what an [agent](#agent) may receive, decide, produce, or do before effects reach the [environment](#environment). Guardrails can exist at input, model, tool, output, and approval boundaries.
 
-Prompt instructions are the weakest form because the same model interprets both the rule and the content that may conflict with it. Stronger controls run outside the model. A tool schema can reject invalid arguments. A [sandbox](#sandbox) can prevent access to the host filesystem. A permission check can require approval before publishing. An output validator can block data that does not match a contract.
+Prompt instructions are the weakest form because the same model interprets both the rule and the content that may conflict with it. Stronger controls run outside the model. A [tool](#tool) schema can reject invalid arguments. A [sandbox](#sandbox) can prevent access to the host filesystem. A [permission request](#permission-request) can require approval before publishing. An output validator can block data that does not match a contract.
 
 | Boundary    | Example control                                    |
 | ----------- | -------------------------------------------------- |
@@ -2037,7 +2027,7 @@ Prompt instructions are the weakest form because the same model interprets both 
 | Output      | Validate schemas, policy, and sensitive data       |
 | Human       | Require approval before high-consequence actions   |
 
-No single guardrail establishes safety. Controls fail in different ways, so important actions need layers. A prompt may resist a [prompt injection](#prompt-injection), but a network allowlist should still prevent an unexpected destination. A path validator may block traversal, while human review checks whether editing any file is appropriate.
+No single guardrail establishes safety. Controls fail in different ways, so important actions need layers. A prompt may resist a [prompt injection](#prompt-injection), but a network allowlist should still prevent an unexpected destination. A path validator may block traversal, while [human review](#human-review) checks whether editing any file is appropriate.
 
 Guardrails also create friction and false positives. If harmless operations require constant approval, users learn to approve without reading. Controls should match the actual consequence and provide clear failure information so the agent can choose a permitted alternative.
 
@@ -2140,7 +2130,7 @@ Isolation comes in grades:
 | Container        | Fresh filesystem, no credentials mounted, discarded after  | Anything the agent does to its own machine |
 | VM / cloud       | A separate machine entirely, often provided by the harness | Everything, including kernel-level escapes |
 
-What no sandbox contains: actions that leave it legitimately. An agent with your git credentials can push; one with network access can call production APIs. Decide what crosses the boundary before deciding how thick to make it.
+What no sandbox contains: actions that leave it legitimately. An agent with your git credentials can push; one with network access can call production APIs, and a [prompt injection](#prompt-injection) in a file it reads can tell it to. Decide what crosses the boundary before deciding how thick to make it.
 
 _Usage:_
 
@@ -2156,9 +2146,7 @@ A working pattern where one or more humans pair with the [agent](#agent) during 
 
 The contrast is with [AFK](#afk) work, where the agent runs unattended and you judge the result afterwards. Human-in-the-loop means catching problems while they're still cheap: you see the agent reach for the wrong file, misread the requirement, or start down a dead end, and you redirect it in one sentence — rather than discovering twenty minutes of confident work built on that mistake. Agents don't reliably know when they're off track; left alone, they tend to push forward rather than stop and ask.
 
-Which pattern fits depends on the work. Well-specified, low-risk, easy-to-verify tasks suit AFK. Tasks that are ambiguous, irreversible, or where you'd struggle to review the finished result — a schema migration, a tricky design decision, anything touching production — suit staying in the loop. The judgement call is essentially: how expensive is a wrong turn, and how late would you catch it?
-
-Human checkpoints are one way to tune [autonomy](#autonomy). They can apply only to consequential transitions rather than every harmless read or search.
+Which pattern fits depends on the work. Well-specified, low-risk, easy-to-verify tasks suit AFK. Tasks that are ambiguous, irreversible, or where you'd struggle to review the finished result — a schema migration, a tricky design decision, anything touching production — suit staying in the loop. The judgement call is essentially: how expensive is a wrong turn, and how late would you catch it? The answer can differ within one task. A checkpoint before the migration runs, and none before the reads and searches that precede it, is a narrower grant of [autonomy](#autonomy) rather than a different pattern.
 
 Some work is in-the-loop by nature, because your reactions are the input. [Grilling](#grilling) only works with you there to answer the questions; [prototyping](#prototyping) only works with you there to react to the artifact.
 

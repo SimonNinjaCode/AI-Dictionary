@@ -21,9 +21,7 @@ Tools most coding agents ship with:
 
 A tool is defined by three things: a name, a description of what it does, and a schema for its parameters. The harness sends these definitions to the [model](./Model.md) with every request, and the model chooses a tool the same way it produces everything else — by writing [tokens](./Token.md), in this case a structured call with arguments. The model never executes anything itself; the harness reads the call, runs the function, and sends back the result.
 
-The tool list sets what the agent can do. A capable model with a narrow tool set is a narrow agent: it will route everything through whatever it has, which is why agents lean so heavily on Bash — a shell is one tool that reaches most of the system. To give an agent a capability cleanly, add a tool for it; [MCP](./MCP.md) is the standard for plugging in tools from outside the harness.
-
-[Computer use](./Computer%20use.md) is a broad visual tool for software that has no suitable API. Prefer a purpose-built tool when one exists because its operations and results are easier to validate.
+The tool list sets what the agent can do. A capable model with a narrow tool set is a narrow agent: it will route everything through whatever it has, which is why agents lean so heavily on Bash — a shell is one tool that reaches most of the system. [Computer use](./Computer%20use.md) reaches further, to software with no API, at the cost of slower actions and results that are harder to validate. To give an agent a capability cleanly, add a purpose-built tool for it; [MCP](./MCP.md) is the standard for plugging in tools from outside the harness.
 
 Tool definitions occupy [context](./Context.md) on every request, so a large tool set has a standing cost before any tool is called — and many similarly-described tools make the model worse at picking the right one.
 
