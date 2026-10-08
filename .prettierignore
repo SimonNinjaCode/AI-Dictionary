@@ -1,5 +1,6 @@
 README.md
 node_modules
+.agents
 package-lock.json
 codebase
 design

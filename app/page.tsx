@@ -72,6 +72,7 @@ export default function Home() {
               <button
                 className={track === value ? "selected" : ""}
                 key={value}
+                aria-pressed={track === value}
                 onClick={() => setTrack(value)}
               >
                 {label}
